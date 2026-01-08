@@ -5,38 +5,47 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
   ValidationPipe,
 } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
+import { GetUsersParamDto } from './dtos/get-users-param.dto';
+import { UpdateUserDto } from './dtos/update-user.dto';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
-  @Get('/:id/{:optional}')
-  public getUsers(
-    @Param('id', ParseIntPipe) id: number | undefined,
-    @Param('optional') optional?: number | undefined,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
-  ) {
-    console.log(id);
-    console.log(limit);
-    console.log(optional);
 
-    return 'you sent a user get request users endpoint';
+constructor(
+  private readonly usersService: UsersService
+){
+
+
+}
+
+  @Get('/:id/')
+  public getUsers(
+    @Param() getUsersParamDto: GetUsersParamDto,
+   
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number
+  ) {
+  
+
+    return this.usersService.findAll(getUsersParamDto, limit ,page)
   }
 
-  // @Get("/:id")
-  // public getuserbyid(@Param() params:any ,@Query() query:any){
-  //     console.log(query);
-
-  //     console.log(params);
-  //      return "you sent a user get user by id request users endpoint"
-  // }
 
   @Post()
   public createUser(@Body() createUSerDto: CreateUserDto) {
     console.log(createUSerDto);
     return 'user create successful';
+  }
+
+  @Patch()
+  public updateUser(@Body() updateUserDto:UpdateUserDto){
+
   }
 }
