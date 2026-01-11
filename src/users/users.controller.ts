@@ -62,8 +62,7 @@ constructor(
 
   @Post()
   public createUser(@Body() createUSerDto: CreateUserDto) {
-    console.log(createUSerDto);
-    return 'user create successful';
+    return this.usersService.createUser(createUSerDto)
   }
 
   @Patch()
