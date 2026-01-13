@@ -1,0 +1,6 @@
+POST http://localhost/products
+Content-Type:application/json
+
+{
+    
+}
