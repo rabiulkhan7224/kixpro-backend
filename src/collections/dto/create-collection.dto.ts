@@ -1,21 +1,41 @@
-import { IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsBoolean, IsNotEmpty, IsOptional, IsString, Length, MaxLength, MinLength } from "class-validator";
 
 export class CreateCollectionDto {
+  @ApiProperty({ description: 'Collection name', minLength: 3, maxLength: 96 })
    @IsString()
-    @IsNotEmpty({ message: 'title cannot be empty.' })
+    @IsNotEmpty({ message: 'name cannot be empty.' })
     @MinLength(3)
     @MaxLength(96)
-  title: string;
+  name: string;
+  
+  @ApiProperty({ description: 'URL-friendly slug', maxLength: 120 })
   @IsString()
-   @IsOptional()
+  @Length(1, 120)
+  slug: string;
+ @ApiPropertyOptional({ description: 'Collection image URL' })
+  @IsOptional()
+  @IsString()
+  @Length(0, 500)
+
   imageUrl?: string;
-   @IsString()
-    @IsNotEmpty({ message: 'title cannot be empty.' })
-    @MinLength(3)
-    @MaxLength(96)
-  description: string;
+  @ApiPropertyOptional({ description: 'Collection description' })
+  @IsOptional()
+  @IsString()
+  description?: string;
+  @ApiPropertyOptional({ description: 'Collection video URL' })
+  @IsOptional()
   @IsString()
    @IsOptional()
   videoUrl?: string;
+   @ApiPropertyOptional({ description: 'Collection active status', default: true })
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
+  @ApiPropertyOptional({ description: 'Product IDs to include in collection' })
+  @IsOptional()
+  @IsString({ each: true })
+  productIds?: string[];
+
   
 }

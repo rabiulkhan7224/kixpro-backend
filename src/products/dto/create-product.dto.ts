@@ -52,33 +52,7 @@ class CreatePriceDto {
     currency: string = 'USD';
 }
 
-// 2. Variant DTO
-class CreateVariantDto {
-  @IsString()
-  sku: string;
 
-  @IsString()
-  variant_slug: string;
-
-  @IsNumber()
-  inventory_quantity: number;
-
-  @IsObject()
-  @IsOptional()
-  seo?: Record<string, any>;
-
-  @ValidateNested({ each: true })
-  @Type(() => CreatePriceDto)
-  prices: CreatePriceDto[];
-
-  @IsArray()
-  @IsString({ each: true })
-  option_value_ids: string[]; // Linked to the Options created below
-
-  @IsArray()
-  @IsOptional()
-  image_urls?: string[]; // URLs for variant-specific images
-}
 
 // 3. Main Product DTO
 export class CreateProductDto {
@@ -100,7 +74,6 @@ export class CreateProductDto {
     keywords: string[];
   };
 
-  
   
   @IsArray()
   @IsString({ each: true })
