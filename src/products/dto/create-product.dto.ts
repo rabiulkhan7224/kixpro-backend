@@ -33,6 +33,7 @@ import {
   IsCurrency
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { CreateVariantDto } from 'src/product-variants/dtos/CreateVariant.dto';
 
 // 1. Regional Price DTO
 class CreatePriceDto {
