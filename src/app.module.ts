@@ -7,6 +7,7 @@ import { ProductsModule } from './products/products.module';
 import { CollectionsModule } from './collections/collections.module';
 import { ProductVariantsModule } from './product-variants/product-variants.module';
 import { CategoryModule } from './category/category.module';
+import { MediasModule } from './medias/medias.module';
 @Module({
   imports: [
     UsersModule,
@@ -28,6 +29,7 @@ import { CategoryModule } from './category/category.module';
     ProductsModule,
     ProductVariantsModule,
     CategoryModule,
+    MediasModule,
   ],
   controllers: [AppController],
   providers: [AppService],
