@@ -9,6 +9,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -17,14 +18,12 @@ import { CollectionType } from './enums/collection-type.enum';
 
 
 @Entity('collections')
+@Index(['slug'], { unique: true })
+@Index(['type'])
+@Index(['isActive'])
 export class Collection extends BaseEntity{
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-  
-
-
- 
-  
+  @PrimaryGeneratedColumn()
+  id: number;
   @Column({ type: 'varchar', length: 96, nullable: true })
   videoUrl?: string;
 

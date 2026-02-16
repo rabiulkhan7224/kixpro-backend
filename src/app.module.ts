@@ -8,22 +8,44 @@ import { CollectionsModule } from './collections/collections.module';
 import { ProductVariantsModule } from './product-variants/product-variants.module';
 import { CategoryModule } from './category/category.module';
 import { MediasModule } from './medias/medias.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import appConfig from './config/app.config';
+import databaseConfig from './config/database.config';
+import enviromentValidation from './config/enviroment.validation';
+
+// Get the current NODE_ENV
+const ENV = process.env.NODE_ENV;
+
+
 @Module({
   imports: [
     UsersModule,
     CollectionsModule,
+    ConfigModule.forRoot({
+      isGlobal:true,
+      envFilePath: !ENV ? '.env' : `.env.${ENV}`,
+      load: [appConfig, databaseConfig],
+      validationSchema: enviromentValidation,
+    }),
     TypeOrmModule.forRootAsync({
-      imports: [],
-      inject: [],
-      useFactory: () => ({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        synchronize: true,
-        port: 5432,
-        username: 'postgres',
-        password: 'password',
-        host: 'localhost',
-        autoLoadEntities: true,
-        database: 'Kixpro-database',
+       synchronize: configService.get('database.synchronize'),
+
+          
+        port: configService.get('database.port'),
+        username: configService.get('database.user'),
+        password: configService.get('database.password'),
+        host: configService.get('database.host'),
+        autoLoadEntities: configService.get('database.autoLoadEntities'),
+        database: configService.get('database.name'),
+        // username: 'postgres',
+        // password: 'password',
+        // host: 'localhost',
+        // autoLoadEntities: true,
+        // database: 'kispro',
       }),
     }),
     ProductsModule,
