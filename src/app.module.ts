@@ -9,6 +9,7 @@ import { ProductVariantsModule } from './product-variants/product-variants.modul
 import { CategoryModule } from './category/category.module';
 import { MediasModule } from './medias/medias.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 import enviromentValidation from './config/enviroment.validation';
@@ -52,6 +53,7 @@ const ENV = process.env.NODE_ENV;
     ProductVariantsModule,
     CategoryModule,
     MediasModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
