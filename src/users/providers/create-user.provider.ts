@@ -1,47 +1,44 @@
+import { BcryptProvider } from './../../auth/providers/bcrypt.provider';
 import {
   BadRequestException,
-  forwardRef,
   Inject,
   Injectable,
   RequestTimeoutException,
+  forwardRef,
 } from '@nestjs/common';
 import { CreateUserDto } from '../dtos/create-user.dto';
-import { Repository } from 'typeorm';
-import { User } from '../user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '../user.entity';
+import { Repository } from 'typeorm';
 import { HashingProvider } from 'src/auth/providers/hashing.provider';
 
 @Injectable()
 export class CreateUserProvider {
   constructor(
     /**
-     * Injecting userRepository
+     * Injecting usersRepository
      */
     @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
+    private usersRepository: Repository<User>,
+
     /**
      * Inject BCrypt Provider
      */
     @Inject(forwardRef(() => HashingProvider))
     private readonly hashingProvider: HashingProvider,
+
+    /**
+     * Inject mailService
+     */
+   
   ) {}
 
   public async createUser(createUserDto: CreateUserDto) {
-    let existingUser = undefined;
-    try {
-      // check is user exists with some email
-      existingUser = await this.usersRepository.findOne({
-        where: { email: createUserDto.email },
-      });
-    } catch (error) {
-      // Handle exception
-      throw new RequestTimeoutException(
-        'Unable to process your request at the moment please try later',
-        {
-          description: 'Error connecting to the database',
-        },
-      );
-    }
+    
+    // Check if the user already exists
+    const existingUser = await this.usersRepository.findOne({
+      where: { email: createUserDto.email },
+    });
 
     // Handle exception
     if (existingUser) {
@@ -49,8 +46,8 @@ export class CreateUserProvider {
         'The user already exists, please check your email.',
       );
     }
-    // Create a new user
 
+    // Create a new user
     let newUser = this.usersRepository.create({
       ...createUserDto,
       password: await this.hashingProvider.hashPassword(createUserDto.password),
@@ -66,6 +63,13 @@ export class CreateUserProvider {
         },
       );
     }
-    return newUser;
+a
+
+    return {
+      id: newUser.id,
+      firstName: newUser.firstName,
+      lastName: newUser.lastName,
+      email: newUser.email,
+    };
   }
 }

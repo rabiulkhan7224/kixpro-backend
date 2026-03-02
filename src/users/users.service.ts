@@ -5,6 +5,7 @@ import { User } from './user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { ConfigService } from '@nestjs/config';
+import { CreateUserProvider } from './providers/create-user.provider';
 
 /**
  * Controller class for '/users' API endpoint
@@ -26,26 +27,20 @@ export class UsersService {
      /**
       * Injecting config service
       */
-     private configService: ConfigService
+     private configService: ConfigService,
+
+       /**
+     * Inject Create Users Provider
+     */
+     private readonly createUserProvider: CreateUserProvider,
   ) {}
 
   
-  /**
-   * createUser
+ /**
+   * Method to create a new user
    */
   public async createUser(createUserDto: CreateUserDto) {
-    // check is user exists with some email
-    const existingUser = await this.userRepository.findOne({
-      where: { email: createUserDto.email },
-    });
-    // Handle exception
-
-    // Create a new user
-
-    let newUser = this.userRepository.create(createUserDto);
-
-    newUser = await this.userRepository.save(newUser);
-    return newUser;
+    return await this.createUserProvider.createUser(createUserDto);
   }
   public findAll(
     getUsersParamDto: GetUsersParamDto,

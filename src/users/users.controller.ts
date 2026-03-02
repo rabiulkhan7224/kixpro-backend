@@ -61,8 +61,8 @@ constructor(
 
 
   @Post()
-  public createUser(@Body() createUSerDto: CreateUserDto) {
-    return this.usersService.createUser(createUSerDto)
+   public createUsers(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.createUser(createUserDto);
   }
 
   @Patch()
