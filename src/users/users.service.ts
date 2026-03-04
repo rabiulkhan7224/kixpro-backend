@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { ConfigService } from '@nestjs/config';
 import { CreateUserProvider } from './providers/create-user.provider';
+import { FindOneUserByEmailProvider } from './providers/find-one-user-by-email.provider';
 
 /**
  * Controller class for '/users' API endpoint
@@ -33,6 +34,12 @@ export class UsersService {
      * Inject Create Users Provider
      */
      private readonly createUserProvider: CreateUserProvider,
+
+    /**
+     * Inject Find One User By Email Provider
+      */
+     private readonly findOneUserByEmailProvider: FindOneUserByEmailProvider,
+     
   ) {}
 
   
@@ -62,4 +69,9 @@ export class UsersService {
       },
     ];
   }
+    // Finds one user by email
+  public async findOneByEmail(email: string) {
+    return await this.findOneUserByEmailProvider.findOneByEmail(email);
+  }
+
 }
