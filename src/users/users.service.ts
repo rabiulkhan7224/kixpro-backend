@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, RequestTimeoutException } from '@nestjs/common';
 import { GetUsersParamDto } from './dtos/get-users-param.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
@@ -14,6 +14,7 @@ import { FindOneUserByEmailProvider } from './providers/find-one-user-by-email.p
 
 @Injectable()
 export class UsersService {
+  
   /**
    * Public method responsible for handling GET request for '/users' endpoint
    */
@@ -23,7 +24,7 @@ export class UsersService {
      * Injecting userRepository
      */
     @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private usersRepository: Repository<User>,
 
      /**
       * Injecting config service
@@ -68,6 +69,35 @@ export class UsersService {
         email: 'jone@gmail.com',
       },
     ];
+  }
+
+  /**
+   * Public method used to find one user using the ID of the user
+   */
+  public async findOneById(id: string) {
+   
+let user
+    try {
+      user = await this.usersRepository.findOneBy({
+        id,
+      });
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment please try later',
+        {
+          description: 'Error connecting to the the datbase',
+        },
+      );
+    }
+
+    /**
+     * Handle the user does not exist
+     */
+    if (!user) {
+      throw new BadRequestException('The user id does not exist');
+    }
+
+    return user;
   }
     // Finds one user by email
   public async findOneByEmail(email: string) {

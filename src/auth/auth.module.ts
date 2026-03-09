@@ -9,6 +9,7 @@ import { GenerateTokensProvider } from './providers/generate-tokens.provider';
 import { ConfigModule } from '@nestjs/config';
 import jwtConfig from './config/jwt.config';
 import { JwtModule } from '@nestjs/jwt';
+import { RefreshTokensProvider } from './providers/refresh-tokens.provider';
 
 @Module({
   controllers: [AuthController],
@@ -20,6 +21,7 @@ import { JwtModule } from '@nestjs/jwt';
     },
     SignInProvider,
     GenerateTokensProvider,
+    RefreshTokensProvider,
   ],
   imports: [
     forwardRef(() => UsersModule),
