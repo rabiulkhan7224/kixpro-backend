@@ -13,6 +13,7 @@ import { AuthModule } from './auth/auth.module';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 import enviromentValidation from './config/enviroment.validation';
+import { dataSourceOptions } from './config/data-source.config';
 
 // Get the current NODE_ENV
 const ENV = process.env.NODE_ENV;
@@ -23,7 +24,7 @@ const ENV = process.env.NODE_ENV;
     UsersModule,
     CollectionsModule,
     ConfigModule.forRoot({
-      isGlobal:true,
+      isGlobal: true,
       envFilePath: !ENV ? '.env' : `.env.${ENV}`,
       load: [appConfig, databaseConfig],
       validationSchema: enviromentValidation,
@@ -31,23 +32,7 @@ const ENV = process.env.NODE_ENV;
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-       synchronize: configService.get('database.synchronize'),
-
-          
-        port: configService.get('database.port'),
-        username: configService.get('database.user'),
-        password: configService.get('database.password'),
-        host: configService.get('database.host'),
-        autoLoadEntities: configService.get('database.autoLoadEntities'),
-        database: configService.get('database.name'),
-        // username: 'postgres',
-        // password: 'password',
-        // host: 'localhost',
-        // autoLoadEntities: true,
-        // database: 'kispro',
-      }),
+      useFactory: (configService: ConfigService) => dataSourceOptions,
     }),
     ProductsModule,
     ProductVariantsModule,
@@ -56,6 +41,6 @@ const ENV = process.env.NODE_ENV;
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService, ],
+  providers: [AppService,],
 })
-export class AppModule {}
+export class AppModule { }
