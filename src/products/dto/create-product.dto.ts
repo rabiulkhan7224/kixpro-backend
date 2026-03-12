@@ -1,93 +1,29 @@
-// export class CreateProductDto {
-//     title: string;
-//   description: string;
-//   slug: string;
-//   tags: string[];
-//   images: {
-//     url: string;
-//     alt_text: string;
-//     is_thumbnail: boolean;
-//   }[];
-//   seo: {
-//     title: string;
-//     description: string;
-//     keywords: string[];
-//   };
-//   variants: {
-//     sku: string;
-//     inventory_quantity: number;
-//     prices: {
-//       amount: number;
-//       region_id: string; 
-//     }[];
+import { IsString, IsOptional, IsNotEmpty, IsUUID } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-
-//   }[];
-// }
-
-
-
-import { 
-  IsString, IsOptional, IsArray, IsNumber, IsBoolean, 
-  ValidateNested, IsObject, IsNotEmpty, 
-  IsCurrency
-} from 'class-validator';
-import { Type } from 'class-transformer';
-import { CreateVariantDto } from 'src/product-variants/dtos/CreateVariant.dto';
-
-// 1. Regional Price DTO
-class CreatePriceDto {
-    @IsNumber()
-    original_price: number;
-
-    @IsOptional()
-    @IsNumber()
-    sale_price?: number;
-
-    @IsOptional()
-    @IsNumber()
-    buying_price?: number;
-
-    @IsString()
-    @IsOptional()
-    currency: string = 'USD';
-}
-
-
-
-// 3. Main Product DTO
 export class CreateProductDto {
+  @ApiProperty({ description: 'The title of the product' })
   @IsString()
   @IsNotEmpty()
   title: string;
 
+  @ApiProperty({ description: 'The unique slug for the product' })
   @IsString()
+  @IsNotEmpty()
   slug: string;
 
+  @ApiPropertyOptional({ description: 'Detailed description of the product' })
   @IsString()
-  description: string;
-
-  @IsObject()
   @IsOptional()
-  seo?: {
-    title: string;
-    description: string;
-    keywords: string[];
-  };
+  description?: string;
 
-  
-  @IsArray()
-  @IsString({ each: true })
-  tags: string[];
+  @ApiPropertyOptional({ description: 'The ID of the category this product belongs to' })
+  @IsUUID()
+  @IsOptional()
+  categoryId?: string;
 
-  @ValidateNested({ each: true })
-  @Type(() => CreateVariantDto)
-  variants: CreateVariantDto[];
-
-  @IsArray()
-  @IsObject({ each: true })
-  options: { title: string; values: string[] }[]; 
-  @IsBoolean()
-  
-  isActive:boolean;
+  @ApiPropertyOptional({ description: 'The ID of the collection this product belongs to' })
+  @IsUUID()
+  @IsOptional()
+  collectionId?: string;
 }

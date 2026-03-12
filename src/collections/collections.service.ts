@@ -1,39 +1,66 @@
-import { Injectable } from '@nestjs/common';
-import { CreateCollectionDto } from './dto/create-collection.dto';
-import { UpdateCollectionDto } from './dto/update-collection.dto';
+import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CreateCollectionDto } from './dto/create-collection.dto';
+import { UpdateCollectionDto } from './dto/update-collection.dto';
 import { Collection } from './collection.entity';
 
 @Injectable()
 export class CollectionsService {
   constructor(
-    /**
-     * Injecting CollectionRepository
-     */
     @InjectRepository(Collection)
-    private CollectionRepository: Repository<Collection>,
+    private readonly collectionRepository: Repository<Collection>,
   ) {}
-  public async create(createCollectionDto: CreateCollectionDto) {
-    let newCollection = this.CollectionRepository.create(createCollectionDto);
 
-    newCollection = await this.CollectionRepository.save(newCollection);
-    return newCollection;
+  async create(createCollectionDto: CreateCollectionDto) {
+    try {
+      const collection = this.collectionRepository.create(createCollectionDto);
+      return await this.collectionRepository.save(collection);
+    } catch (error) {
+      throw new InternalServerErrorException('Error creating collection');
+    }
   }
 
-  findAll() {
-    return `This action returns all collections`;
+  async findAll() {
+    try {
+      return await this.collectionRepository.find();
+    } catch (error) {
+      throw new InternalServerErrorException('Error fetching collections');
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} collection`;
+  async findOne(id: string) {
+    let collection;
+    try {
+      collection = await this.collectionRepository.findOne({ where: { id } });
+    } catch (error) {
+      throw new InternalServerErrorException('Error fetching collection');
+    }
+    
+    if (!collection) {
+      throw new NotFoundException(`Collection with ID ${id} not found`);
+    }
+    return collection;
   }
 
-  update(id: number, updateCollectionDto: UpdateCollectionDto) {
-    return `This action updates a #${id} collection`;
+  async update(id: string, updateCollectionDto: UpdateCollectionDto) {
+    const collection = await this.findOne(id);
+    Object.assign(collection, updateCollectionDto);
+    
+    try {
+      return await this.collectionRepository.save(collection);
+    } catch (error) {
+      throw new InternalServerErrorException('Error updating collection');
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} collection`;
+  async remove(id: string) {
+    const collection = await this.findOne(id);
+    
+    try {
+      return await this.collectionRepository.remove(collection);
+    } catch (error) {
+      throw new InternalServerErrorException('Error removing collection');
+    }
   }
 }

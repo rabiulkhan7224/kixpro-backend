@@ -4,6 +4,7 @@ import {
   Inject,
   Injectable,
   RequestTimeoutException,
+  InternalServerErrorException,
   forwardRef,
 } from '@nestjs/common';
 import { CreateUserDto } from '../dtos/create-user.dto';
@@ -34,11 +35,18 @@ export class CreateUserProvider {
   ) {}
 
   public async createUser(createUserDto: CreateUserDto) {
-    
-    // Check if the user already exists
-    const existingUser = await this.usersRepository.findOne({
-      where: { email: createUserDto.email },
-    });
+    let existingUser: User | null = null;
+    try {
+      // Check if the user already exists
+      existingUser = await this.usersRepository.findOne({
+        where: { email: createUserDto.email },
+      });
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment please try later',
+        { description: 'Error connecting to the database' },
+      );
+    }
 
     // Handle exception
     if (existingUser) {
@@ -47,11 +55,18 @@ export class CreateUserProvider {
       );
     }
 
-    // Create a new user
-    let newUser = this.usersRepository.create({
-      ...createUserDto,
-      password: await this.hashingProvider.hashPassword(createUserDto.password),
-    });
+    let newUser: User;
+    try {
+      // Create a new user
+      newUser = this.usersRepository.create({
+        ...createUserDto,
+        password: await this.hashingProvider.hashPassword(createUserDto.password),
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'An error occurred while creating user profile',
+      );
+    }
 
     try {
       newUser = await this.usersRepository.save(newUser);
@@ -59,7 +74,7 @@ export class CreateUserProvider {
       throw new RequestTimeoutException(
         'Unable to process your request at the moment please try later',
         {
-          description: 'Error connecting to the the datbase',
+          description: 'Error connecting to the database',
         },
       );
     }

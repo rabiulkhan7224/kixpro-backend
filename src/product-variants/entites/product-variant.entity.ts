@@ -12,6 +12,7 @@ import {
   BeforeInsert,
   BeforeUpdate,
   BaseEntity,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 
 
@@ -21,6 +22,9 @@ import {
 @Index(['price'])
 @Check('"price" > 0')
 export class ProductVariant extends BaseEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
   @Column({ type: 'varchar', length: 100, unique: true })
   sku: string;
 

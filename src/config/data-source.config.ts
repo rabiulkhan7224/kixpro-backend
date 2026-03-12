@@ -15,7 +15,8 @@ export const dataSourceOptions: DataSourceOptions = {
   migrations: [join(__dirname, '../migrations/*{.ts,.js}')],
   migrationsTableName: 'typeorm_migrations',
   logging: process.env.NODE_ENV === 'development',
-  synchronize: false,
+  // synchronize: true,
+
 };
 
 export default new DataSource(dataSourceOptions);
