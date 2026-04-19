@@ -1,7 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
 import { Product } from '../../products/entities/product.entity';
-import { ProductVariant } from '../../product-variants/entites/product-variant.entity';
-
+import { ProductVariant } from 'src/product-variants/entites/product-variant.entity';
 @Entity('media')
 export class Media {
   @PrimaryGeneratedColumn('uuid')

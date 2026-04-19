@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { Collection } from '../../collections/collection.entity';
 import { Category } from '../../category/entities/category.entity';
-import { ProductVariant } from '../../product-variants/entites/productVariant.entity';
+import { ProductVariant } from '../../product-variants/entites/product-variant.entity';
 import { Media } from '../../medias/entities/media.entity';
 
 @Entity('products')

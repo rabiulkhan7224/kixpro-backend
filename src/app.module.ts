@@ -31,7 +31,13 @@ const ENV = process.env.NODE_ENV;
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => dataSourceOptions,
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        url: configService.get<string>('database.url'),
+        // ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: true } : false,
+        autoLoadEntities: true,
+        synchronize: false, // Set to false in production
+      }),
     }),
     ProductsModule,
     ProductVariantsModule,
