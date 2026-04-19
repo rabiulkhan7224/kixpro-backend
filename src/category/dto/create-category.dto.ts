@@ -12,8 +12,8 @@ export class CreateCategoryDto {
   @IsNotEmpty()
   slug: string;
 
-  @ApiPropertyOptional({ description: 'The ID of the parent category, if any' })
-  @IsUUID()
-  @IsOptional()
-  parentCategoryId?: string;
+  @ApiProperty({ description: 'description' })
+  @IsString()
+  @IsNotEmpty()
+  description: string;
 }

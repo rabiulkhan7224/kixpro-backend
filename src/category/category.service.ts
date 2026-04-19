@@ -14,15 +14,8 @@ export class CategoryService {
 
   async create(createCategoryDto: CreateCategoryDto) {
     try {
-      let parentCategory = null;
-      if (createCategoryDto.parentCategoryId) {
-        parentCategory = await this.findOne(createCategoryDto.parentCategoryId);
-      }
-
-      const category = this.categoryRepository.create({
-        ...createCategoryDto,
-        parentCategory: parentCategory || undefined,
-      });
+      const category = this.categoryRepository.create(createCategoryDto);
+      console.log(category);
       return await this.categoryRepository.save(category);
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
@@ -61,14 +54,6 @@ export class CategoryService {
     const category = await this.findOne(id);
 
     try {
-      if (updateCategoryDto.parentCategoryId !== undefined) {
-        if (updateCategoryDto.parentCategoryId === null) {
-          category.parentCategory = null as any;
-        } else {
-          category.parentCategory = await this.findOne(updateCategoryDto.parentCategoryId);
-        }
-      }
-
       if (updateCategoryDto.name) category.name = updateCategoryDto.name;
       if (updateCategoryDto.slug) category.slug = updateCategoryDto.slug;
 

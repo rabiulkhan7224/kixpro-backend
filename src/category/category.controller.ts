@@ -12,6 +12,7 @@ export class CategoryController {
   @Post()
   @ApiOperation({ summary: 'Create a new category' })
   create(@Body() createCategoryDto: CreateCategoryDto) {
+    console.log(createCategoryDto);
     return this.categoryService.create(createCategoryDto);
   }
 

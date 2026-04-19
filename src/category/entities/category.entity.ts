@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   ManyToOne,
   OneToMany,
+  Index,
 } from 'typeorm';
 import { Product } from '../../products/entities/product.entity';
 
@@ -20,13 +21,8 @@ export class Category {
   @Column({ unique: true })
   slug: string;
 
-  @ManyToOne(() => Category, category => category.childCategories, {
-    nullable: true,
-  })
-  parentCategory: Category;
-
-  @OneToMany(() => Category, category => category.parentCategory)
-  childCategories: Category[];
+  @Column({ nullable: true })
+  description?: string;
 
   @OneToMany(() => Product, product => product.category)
   products: Product[];
