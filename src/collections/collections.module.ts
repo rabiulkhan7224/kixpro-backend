@@ -6,6 +6,6 @@ import { Collection } from './collection.entity';
 @Module({
   controllers: [CollectionsController],
   providers: [CollectionsService],
-  imports:[TypeOrmModule.forFeature([Collection])]
+  imports: [TypeOrmModule.forFeature([Collection])],
 })
 export class CollectionsModule {}

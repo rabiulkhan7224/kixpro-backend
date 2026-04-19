@@ -39,7 +39,7 @@ export class MediasService {
     } catch (error) {
       throw new InternalServerErrorException('Error fetching media record');
     }
-    
+
     if (!media) {
       throw new NotFoundException(`Media with ID ${id} not found`);
     }
@@ -52,16 +52,16 @@ export class MediasService {
     try {
       return await this.mediaRepository.save(media);
     } catch (error) {
-       throw new InternalServerErrorException('Error updating media record');
+      throw new InternalServerErrorException('Error updating media record');
     }
   }
 
   async remove(id: string) {
     const media = await this.findOne(id);
     try {
-       return await this.mediaRepository.remove(media);
+      return await this.mediaRepository.remove(media);
     } catch (error) {
-       throw new InternalServerErrorException('Error removing media record');
+      throw new InternalServerErrorException('Error removing media record');
     }
   }
 }

@@ -31,6 +31,6 @@ export class User {
   })
   password: string;
 
-    @Exclude()
+  @Exclude()
   googleId?: string;
 }

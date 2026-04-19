@@ -18,7 +18,6 @@ import { dataSourceOptions } from './config/data-source.config';
 // Get the current NODE_ENV
 const ENV = process.env.NODE_ENV;
 
-
 @Module({
   imports: [
     UsersModule,
@@ -41,6 +40,6 @@ const ENV = process.env.NODE_ENV;
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService,],
+  providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

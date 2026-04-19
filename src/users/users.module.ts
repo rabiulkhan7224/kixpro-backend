@@ -7,11 +7,10 @@ import { CreateUserProvider } from './providers/create-user.provider';
 import { AuthModule } from 'src/auth/auth.module';
 import { FindOneUserByEmailProvider } from './providers/find-one-user-by-email.provider';
 
-
 @Module({
   controllers: [UsersController],
-  providers: [UsersService, CreateUserProvider, FindOneUserByEmailProvider,  ],
+  providers: [UsersService, CreateUserProvider, FindOneUserByEmailProvider],
   exports: [UsersService],
-  imports:[TypeOrmModule.forFeature([User],), AuthModule, ]
+  imports: [TypeOrmModule.forFeature([User]), AuthModule],
 })
 export class UsersModule {}

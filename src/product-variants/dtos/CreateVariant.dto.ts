@@ -22,7 +22,10 @@ export class CreateVariantDto {
   @IsNotEmpty()
   stock: number;
 
-  @ApiPropertyOptional({ description: 'JSON object containing attributes like Size, Color, etc.', type: Object })
+  @ApiPropertyOptional({
+    description: 'JSON object containing attributes like Size, Color, etc.',
+    type: Object,
+  })
   @IsObject()
   @IsOptional()
   attributes?: Record<string, any>;

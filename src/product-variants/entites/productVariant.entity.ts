@@ -9,7 +9,9 @@ export class ProductVariant {
   @Column()
   productId: string;
 
-  @ManyToOne(() => Product, product => product.variants, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Product, product => product.variants, {
+    onDelete: 'CASCADE',
+  })
   product: Product;
 
   @Column({ unique: true })

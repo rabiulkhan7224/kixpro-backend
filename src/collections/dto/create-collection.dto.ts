@@ -12,7 +12,9 @@ export class CreateCollectionDto {
   @IsNotEmpty()
   slug: string;
 
-  @ApiPropertyOptional({ description: 'Optional description of the collection' })
+  @ApiPropertyOptional({
+    description: 'Optional description of the collection',
+  })
   @IsString()
   @IsOptional()
   description?: string;

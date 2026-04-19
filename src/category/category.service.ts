@@ -16,7 +16,7 @@ export class CategoryService {
     try {
       let parentCategory = null;
       if (createCategoryDto.parentCategoryId) {
-         parentCategory = await this.findOne(createCategoryDto.parentCategoryId);
+        parentCategory = await this.findOne(createCategoryDto.parentCategoryId);
       }
 
       const category = this.categoryRepository.create({
@@ -32,7 +32,9 @@ export class CategoryService {
 
   async findAll() {
     try {
-      return await this.categoryRepository.find({ relations: ['parentCategory', 'childCategories'] });
+      return await this.categoryRepository.find({
+        relations: ['parentCategory', 'childCategories'],
+      });
     } catch (error) {
       throw new InternalServerErrorException('Error fetching categories');
     }
@@ -48,7 +50,7 @@ export class CategoryService {
     } catch (error) {
       throw new InternalServerErrorException('Error fetching category');
     }
-    
+
     if (!category) {
       throw new NotFoundException(`Category with ID ${id} not found`);
     }
@@ -57,7 +59,7 @@ export class CategoryService {
 
   async update(id: string, updateCategoryDto: UpdateCategoryDto) {
     const category = await this.findOne(id);
-    
+
     try {
       if (updateCategoryDto.parentCategoryId !== undefined) {
         if (updateCategoryDto.parentCategoryId === null) {
@@ -72,7 +74,7 @@ export class CategoryService {
 
       return await this.categoryRepository.save(category);
     } catch (error) {
-       if (error instanceof NotFoundException) throw error;
+      if (error instanceof NotFoundException) throw error;
       throw new InternalServerErrorException('Error updating category');
     }
   }

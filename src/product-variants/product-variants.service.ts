@@ -37,7 +37,7 @@ export class ProductVariantsService {
         relations: ['product'],
       });
     } catch (error) {
-        throw new InternalServerErrorException('Error fetching product variant');
+      throw new InternalServerErrorException('Error fetching product variant');
     }
     if (!variant) {
       throw new NotFoundException(`Product variant with ID ${id} not found`);
@@ -60,7 +60,7 @@ export class ProductVariantsService {
     try {
       return await this.variantRepository.remove(variant);
     } catch (error) {
-       throw new InternalServerErrorException('Error removing product variant');
+      throw new InternalServerErrorException('Error removing product variant');
     }
   }
 }

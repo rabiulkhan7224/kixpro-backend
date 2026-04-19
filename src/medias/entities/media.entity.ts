@@ -16,13 +16,19 @@ export class Media {
   @Column()
   productId: string;
 
-  @ManyToOne(() => Product, product => product.media, { onDelete: 'CASCADE', nullable: true })
+  @ManyToOne(() => Product, product => product.media, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
   product: Product;
 
   @Column({ nullable: true })
   variantId: string;
 
-  @ManyToOne(() => ProductVariant, variant => variant.media, { onDelete: 'CASCADE', nullable: true })
+  @ManyToOne(() => ProductVariant, variant => variant.media, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
   variant: ProductVariant;
 
   @CreateDateColumn()

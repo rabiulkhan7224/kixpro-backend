@@ -17,12 +17,16 @@ export class CreateProductDto {
   @IsOptional()
   description?: string;
 
-  @ApiPropertyOptional({ description: 'The ID of the category this product belongs to' })
+  @ApiPropertyOptional({
+    description: 'The ID of the category this product belongs to',
+  })
   @IsUUID()
   @IsOptional()
   categoryId?: string;
 
-  @ApiPropertyOptional({ description: 'The ID of the collection this product belongs to' })
+  @ApiPropertyOptional({
+    description: 'The ID of the collection this product belongs to',
+  })
   @IsUUID()
   @IsOptional()
   collectionId?: string;

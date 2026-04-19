@@ -1,107 +1,117 @@
-import { BadRequestException, Injectable, RequestTimeoutException } from '@nestjs/common';
-import { GetUsersParamDto } from './dtos/get-users-param.dto';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  RequestTimeoutException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './user.entity';
 import { Repository } from 'typeorm';
-import { CreateUserDto } from './dtos/create-user.dto';
 import { ConfigService } from '@nestjs/config';
+import { CreateUserDto } from './dtos/create-user.dto';
+import { UpdateUserDto } from './dtos/update-user.dto';
+import { User } from './user.entity';
 import { CreateUserProvider } from './providers/create-user.provider';
 import { FindOneUserByEmailProvider } from './providers/find-one-user-by-email.provider';
 
 /**
- * Controller class for '/users' API endpoint
+ * Service handling all business logic for the /users endpoint.
  */
-
 @Injectable()
 export class UsersService {
-  
-  /**
-   * Public method responsible for handling GET request for '/users' endpoint
-   */
-
   constructor(
-    /**
-     * Injecting userRepository
-     */
     @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    private readonly usersRepository: Repository<User>,
 
-     /**
-      * Injecting config service
-      */
-     private configService: ConfigService,
+    private readonly configService: ConfigService,
 
-       /**
-     * Inject Create Users Provider
-     */
-     private readonly createUserProvider: CreateUserProvider,
+    private readonly createUserProvider: CreateUserProvider,
 
-    /**
-     * Inject Find One User By Email Provider
-      */
-     private readonly findOneUserByEmailProvider: FindOneUserByEmailProvider,
-     
+    private readonly findOneUserByEmailProvider: FindOneUserByEmailProvider,
   ) {}
 
-  
- /**
-   * Method to create a new user
+  /**
+   * Create a new user – delegates to CreateUserProvider.
    */
   public async createUser(createUserDto: CreateUserDto) {
-    return await this.createUserProvider.createUser(createUserDto);
-  }
-  public findAll(
-    getUsersParamDto: GetUsersParamDto,
-    limit: number,
-    page: number,
-  ) {
-    const environment = this.configService.get('PORT');
-    console.log('Current PORT:', environment);
-    return [
-      {
-        firstName: 'rabiul',
-        lastName: 'hasan',
-        email: 'rabiul@gmail.com',
-      },
-      {
-        firstName: 'jone',
-        lastName: 'dos',
-        email: 'jone@gmail.com',
-      },
-    ];
+    return this.createUserProvider.createUser(createUserDto);
   }
 
   /**
-   * Public method used to find one user using the ID of the user
+   * Return a paginated list of users, never exposing the password column.
    */
-  public async findOneById(id: string) {
-   
-let user
+  public async findAll(limit: number, page: number) {
+    let users: User[];
     try {
-      user = await this.usersRepository.findOneBy({
-        id,
-      });
-    } catch (error) {
-      throw new RequestTimeoutException(
-        'Unable to process your request at the moment please try later',
-        {
-          description: 'Error connecting to the the datbase',
+      users = await this.usersRepository.find({
+        skip: (page - 1) * limit,
+        take: limit,
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
         },
+      });
+    } catch {
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment, please try again later.',
+        { description: 'Error connecting to the database' },
       );
     }
 
-    /**
-     * Handle the user does not exist
-     */
-    if (!user) {
-      throw new BadRequestException('The user id does not exist');
+    return {
+      data: users,
+      meta: { page, limit, count: users.length },
+    };
+  }
+
+  /**
+   * Find a single user by UUID – throws 404 if not found.
+   */
+  public async findOneById(id: string) {
+    let user: User | null;
+    try {
+      user = await this.usersRepository.findOne({
+        where: { id },
+        select: { id: true, firstName: true, lastName: true, email: true },
+      });
+    } catch {
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment, please try again later.',
+        { description: 'Error connecting to the database' },
+      );
     }
 
-    return user;
-  }
-    // Finds one user by email
-  public async findOneByEmail(email: string) {
-    return await this.findOneUserByEmailProvider.findOneByEmail(email);
+    if (!user) {
+      throw new NotFoundException(`User with ID "${id}" was not found.`);
+    }
+
+    return { data: user };
   }
 
+  /**
+   * Update an existing user by ID.
+   */
+  public async updateUser(id: string, updateUserDto: UpdateUserDto) {
+    const { data: user } = await this.findOneById(id);
+
+    // Merge changes into entity
+    Object.assign(user, updateUserDto);
+
+    try {
+      const updated = await this.usersRepository.save(user);
+      const { password: _, ...result } = updated as any;
+      return { data: result };
+    } catch {
+      throw new InternalServerErrorException('Error updating user, please try again later.');
+    }
+  }
+
+  /**
+   * Find a user by email – delegates to FindOneUserByEmailProvider.
+   */
+  public async findOneByEmail(email: string) {
+    return this.findOneUserByEmailProvider.findOneByEmail(email);
+  }
 }

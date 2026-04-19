@@ -12,7 +12,9 @@ export class CreateMediaDto {
   @IsNotEmpty()
   type: string;
 
-  @ApiProperty({ description: 'The ID of the product this media is associated with' })
+  @ApiProperty({
+    description: 'The ID of the product this media is associated with',
+  })
   @IsUUID()
   @IsNotEmpty()
   productId: string;

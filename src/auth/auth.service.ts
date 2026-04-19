@@ -24,13 +24,11 @@ export class AuthService {
     private readonly refreshTokensProvider: RefreshTokensProvider,
   ) {}
 
- public async signIn(signInDto: SignInDto) {
+  public async signIn(signInDto: SignInDto) {
     return await this.signInProvider.signIn(signInDto);
   }
 
   public async refreshTokens(refreshTokenDto: RefreshTokenDto) {
     return await this.refreshTokensProvider.refreshTokens(refreshTokenDto);
   }
-
-
 }

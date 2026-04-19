@@ -4,5 +4,5 @@ export enum CollectionType {
   SEASONAL = 'seasonal',
   GENDER = 'gender',
   SALE = 'sale',
-  FEATURED = 'featured'
+  FEATURED = 'featured',
 }

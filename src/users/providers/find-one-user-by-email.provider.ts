@@ -5,15 +5,15 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class FindOneUserByEmailProvider {
-constructor(
-      /**
+  constructor(
+    /**
      * Inject usersRepository
      */
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
-){}
+  ) {}
   public async findOneByEmail(email: string) {
-    let user
+    let user;
 
     try {
       // This will return null if the user is not found
@@ -32,6 +32,4 @@ constructor(
 
     return user;
   }
-
-
 }

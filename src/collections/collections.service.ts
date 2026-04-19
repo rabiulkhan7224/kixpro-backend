@@ -36,7 +36,7 @@ export class CollectionsService {
     } catch (error) {
       throw new InternalServerErrorException('Error fetching collection');
     }
-    
+
     if (!collection) {
       throw new NotFoundException(`Collection with ID ${id} not found`);
     }
@@ -46,7 +46,7 @@ export class CollectionsService {
   async update(id: string, updateCollectionDto: UpdateCollectionDto) {
     const collection = await this.findOne(id);
     Object.assign(collection, updateCollectionDto);
-    
+
     try {
       return await this.collectionRepository.save(collection);
     } catch (error) {
@@ -56,7 +56,7 @@ export class CollectionsService {
 
   async remove(id: string) {
     const collection = await this.findOne(id);
-    
+
     try {
       return await this.collectionRepository.remove(collection);
     } catch (error) {

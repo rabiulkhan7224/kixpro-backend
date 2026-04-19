@@ -31,7 +31,6 @@ export class CreateUserProvider {
     /**
      * Inject mailService
      */
-   
   ) {}
 
   public async createUser(createUserDto: CreateUserDto) {
@@ -42,17 +41,14 @@ export class CreateUserProvider {
         where: { email: createUserDto.email },
       });
     } catch (error) {
-      throw new RequestTimeoutException(
-        'Unable to process your request at the moment please try later',
-        { description: 'Error connecting to the database' },
-      );
+      throw new RequestTimeoutException('Unable to process your request at the moment please try later', {
+        description: 'Error connecting to the database',
+      });
     }
 
     // Handle exception
     if (existingUser) {
-      throw new BadRequestException(
-        'The user already exists, please check your email.',
-      );
+      throw new BadRequestException('The user already exists, please check your email.');
     }
 
     let newUser: User;
@@ -63,22 +59,16 @@ export class CreateUserProvider {
         password: await this.hashingProvider.hashPassword(createUserDto.password),
       });
     } catch (error) {
-      throw new InternalServerErrorException(
-        'An error occurred while creating user profile',
-      );
+      throw new InternalServerErrorException('An error occurred while creating user profile');
     }
 
     try {
       newUser = await this.usersRepository.save(newUser);
     } catch (error) {
-      throw new RequestTimeoutException(
-        'Unable to process your request at the moment please try later',
-        {
-          description: 'Error connecting to the database',
-        },
-      );
+      throw new RequestTimeoutException('Unable to process your request at the moment please try later', {
+        description: 'Error connecting to the database',
+      });
     }
-
 
     return {
       id: newUser.id,

@@ -15,7 +15,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-
 @Entity('product_variants')
 @Index(['sku'], { unique: true })
 @Index(['productId'])
@@ -28,26 +27,26 @@ export class ProductVariant extends BaseEntity {
   @Column({ type: 'varchar', length: 100, unique: true })
   sku: string;
 
-  @Column({ 
-    type: 'decimal', 
-    precision: 12, 
+  @Column({
+    type: 'decimal',
+    precision: 12,
     scale: 2,
     transformer: {
       to: (value: number) => value,
-      from: (value: string) => parseFloat(value)
-    }
+      from: (value: string) => parseFloat(value),
+    },
   })
   price: number;
 
-  @Column({ 
-    type: 'decimal', 
-    precision: 12, 
+  @Column({
+    type: 'decimal',
+    precision: 12,
     scale: 2,
     nullable: true,
     transformer: {
       to: (value: number) => value,
-      from: (value: string) => value ? parseFloat(value) : null
-    }
+      from: (value: string) => (value ? parseFloat(value) : null),
+    },
   })
   compareAtPrice: number;
 
@@ -88,26 +87,26 @@ export class ProductVariant extends BaseEntity {
   productId: string;
 
   // Relationships
-  @ManyToOne(() => Product, (product) => product.variants, {
+  @ManyToOne(() => Product, product => product.variants, {
     onDelete: 'CASCADE',
     nullable: false,
   })
   @JoinColumn({ name: 'product_id' })
   product: Product;
 
-//   @OneToOne(() => Inventory, (inventory) => inventory.variant, {
-//     cascade: true,
-//     eager: false,
-//   })
-//   inventory: Inventory;
+  //   @OneToOne(() => Inventory, (inventory) => inventory.variant, {
+  //     cascade: true,
+  //     eager: false,
+  //   })
+  //   inventory: Inventory;
 
-  @OneToMany(() => Media, (media) => media.variant, {
+  @OneToMany(() => Media, media => media.variant, {
     eager: false,
   })
   media: Media[];
 
-//   @OneToMany(() => OrderItem, (orderItem) => orderItem.variant)
-//   orderItems: OrderItem[];
+  //   @OneToMany(() => OrderItem, (orderItem) => orderItem.variant)
+  //   orderItems: OrderItem[];
 
   // Virtual/computed properties
   get discountPercentage(): number {
@@ -142,9 +141,7 @@ export class ProductVariant extends BaseEntity {
   @BeforeInsert()
   generateSkuIfEmpty() {
     if (!this.sku && this.product && this.optionValues) {
-      const skuParts = Object.values(this.optionValues).map(val => 
-        val.substring(0, 3).toUpperCase()
-      );
+      const skuParts = Object.values(this.optionValues).map(val => val.substring(0, 3).toUpperCase());
       this.sku = `${this.product.title.substring(0, 3).toUpperCase()}-${skuParts.join('-')}`;
     }
   }
