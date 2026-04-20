@@ -54,10 +54,9 @@ export class UsersService {
         },
       });
     } catch {
-      throw new RequestTimeoutException(
-        'Unable to process your request at the moment, please try again later.',
-        { description: 'Error connecting to the database' },
-      );
+      throw new RequestTimeoutException('Unable to process your request at the moment, please try again later.', {
+        description: 'Error connecting to the database',
+      });
     }
 
     return {
@@ -77,10 +76,9 @@ export class UsersService {
         select: { id: true, firstName: true, lastName: true, email: true },
       });
     } catch {
-      throw new RequestTimeoutException(
-        'Unable to process your request at the moment, please try again later.',
-        { description: 'Error connecting to the database' },
-      );
+      throw new RequestTimeoutException('Unable to process your request at the moment, please try again later.', {
+        description: 'Error connecting to the database',
+      });
     }
 
     if (!user) {

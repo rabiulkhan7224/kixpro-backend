@@ -9,6 +9,8 @@ const server = express();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
+  // Enable global CORS
+  app.enableCors();
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

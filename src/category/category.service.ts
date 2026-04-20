@@ -25,9 +25,7 @@ export class CategoryService {
 
   async findAll() {
     try {
-      return await this.categoryRepository.find({
-        relations: ['parentCategory', 'childCategories'],
-      });
+      return await this.categoryRepository.find({});
     } catch (error) {
       throw new InternalServerErrorException('Error fetching categories');
     }

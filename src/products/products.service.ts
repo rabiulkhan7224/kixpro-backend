@@ -24,7 +24,7 @@ export class ProductsService {
   async findAll() {
     try {
       return await this.productRepository.find({
-        relations: ['category', 'collection'],
+        relations: ['category', 'collection', 'variants', 'media'],
       });
     } catch (error) {
       throw new InternalServerErrorException('Error fetching products');

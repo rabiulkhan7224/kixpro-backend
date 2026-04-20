@@ -1,0 +1,106 @@
+import { MigrationInterface, QueryRunner } from "typeorm";
+
+export class  $npmConfigName1776666235171 implements MigrationInterface {
+    name = ' $npmConfigName1776666235171'
+
+    public async up(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP CONSTRAINT "FK_6343513e20e2deab45edfce1316"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_0a8c778740127a7bd29470fb89"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_6343513e20e2deab45edfce131"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_46f236f21640f9da218a063a86"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP CONSTRAINT "CHK_ffbfb366ba4b77ed7e8b9bd9b8"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "compareAtPrice"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "costPerItem"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "size"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "color"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "material"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "style"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "weight"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "weightUnit"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "currency"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "barcode"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "taxable"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "optionValues"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "product_id"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "compareAtPrice" numeric(12,2)`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "costPerItem" numeric(10,3)`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "size" character varying(50)`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "color" character varying(50)`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "material" character varying(100)`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "style" character varying(100)`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "weight" numeric(8,3)`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "weightUnit" character varying(20)`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "currency" character varying(10) NOT NULL DEFAULT 'USD'`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "barcode" character varying(20)`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "taxable" boolean NOT NULL DEFAULT true`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "optionValues" jsonb`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "product_id" uuid NOT NULL`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "productId" uuid NOT NULL`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "stock" integer NOT NULL`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "attributes" jsonb`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "createdAt" TIMESTAMP NOT NULL DEFAULT now()`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "updatedAt" TIMESTAMP NOT NULL DEFAULT now()`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP CONSTRAINT "UQ_46f236f21640f9da218a063a866"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "sku"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "sku" character varying NOT NULL`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD CONSTRAINT "UQ_46f236f21640f9da218a063a866" UNIQUE ("sku")`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ALTER COLUMN "price" TYPE numeric`);
+        await queryRunner.query(`CREATE INDEX "IDX_0a8c778740127a7bd29470fb89" ON "product_variants" ("price") `);
+        await queryRunner.query(`CREATE INDEX "IDX_6343513e20e2deab45edfce131" ON "product_variants" ("product_id") `);
+        await queryRunner.query(`CREATE UNIQUE INDEX "IDX_46f236f21640f9da218a063a86" ON "product_variants" ("sku") `);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD CONSTRAINT "CHK_ffbfb366ba4b77ed7e8b9bd9b8" CHECK ("price" > 0)`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD CONSTRAINT "FK_6343513e20e2deab45edfce1316" FOREIGN KEY ("product_id") REFERENCES "products"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD CONSTRAINT "FK_f515690c571a03400a9876600b5" FOREIGN KEY ("productId") REFERENCES "products"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    }
+
+    public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP CONSTRAINT "FK_f515690c571a03400a9876600b5"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP CONSTRAINT "FK_6343513e20e2deab45edfce1316"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP CONSTRAINT "CHK_ffbfb366ba4b77ed7e8b9bd9b8"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_46f236f21640f9da218a063a86"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_6343513e20e2deab45edfce131"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_0a8c778740127a7bd29470fb89"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ALTER COLUMN "price" TYPE numeric(12,2)`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP CONSTRAINT "UQ_46f236f21640f9da218a063a866"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "sku"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "sku" character varying(100) NOT NULL`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD CONSTRAINT "UQ_46f236f21640f9da218a063a866" UNIQUE ("sku")`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "updatedAt"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "createdAt"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "attributes"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "stock"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "productId"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "product_id"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "optionValues"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "taxable"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "barcode"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "currency"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "weightUnit"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "weight"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "style"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "material"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "color"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "size"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "costPerItem"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" DROP COLUMN "compareAtPrice"`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "product_id" uuid NOT NULL`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "optionValues" jsonb`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "taxable" boolean NOT NULL DEFAULT true`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "barcode" character varying(20)`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "currency" character varying(10) NOT NULL DEFAULT 'USD'`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "weightUnit" character varying(20)`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "weight" numeric(8,3)`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "style" character varying(100)`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "material" character varying(100)`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "color" character varying(50)`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "size" character varying(50)`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "costPerItem" numeric(10,3)`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD "compareAtPrice" numeric(12,2)`);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD CONSTRAINT "CHK_ffbfb366ba4b77ed7e8b9bd9b8" CHECK ((price > (0)::numeric))`);
+        await queryRunner.query(`CREATE UNIQUE INDEX "IDX_46f236f21640f9da218a063a86" ON "product_variants" ("sku") `);
+        await queryRunner.query(`CREATE INDEX "IDX_6343513e20e2deab45edfce131" ON "product_variants" ("product_id") `);
+        await queryRunner.query(`CREATE INDEX "IDX_0a8c778740127a7bd29470fb89" ON "product_variants" ("price") `);
+        await queryRunner.query(`ALTER TABLE "product_variants" ADD CONSTRAINT "FK_6343513e20e2deab45edfce1316" FOREIGN KEY ("product_id") REFERENCES "products"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+    }
+
+}

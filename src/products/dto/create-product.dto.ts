@@ -30,4 +30,11 @@ export class CreateProductDto {
   @IsUUID()
   @IsOptional()
   collectionId?: string;
+
+  @ApiPropertyOptional({
+    description: 'The ID of the media associated with this product',
+  })
+  @IsUUID()
+  @IsOptional()
+  mediaId?: string;
 }

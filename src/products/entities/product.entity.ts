@@ -34,6 +34,10 @@ export class Product {
 
   @Column({ nullable: true })
   collectionId: string;
+  @Column({ nullable: true })
+  mediaId: string;
+  @Column({ nullable: true })
+  brand: string;
 
   @ManyToOne(() => Collection, collection => collection.products)
   collection: Collection;
@@ -46,7 +50,6 @@ export class Product {
 
   @CreateDateColumn()
   createdAt: Date;
-
   @UpdateDateColumn()
   updatedAt: Date;
 }

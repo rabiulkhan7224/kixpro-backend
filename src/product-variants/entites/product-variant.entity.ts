@@ -109,6 +109,7 @@ export class ProductVariant extends BaseEntity {
   //   orderItems: OrderItem[];
 
   // Virtual/computed properties
+
   get discountPercentage(): number {
     if (!this.compareAtPrice || this.compareAtPrice <= this.price) return 0;
     return Math.round(((this.compareAtPrice - this.price) / this.compareAtPrice) * 100);

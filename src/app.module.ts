@@ -36,7 +36,7 @@ const ENV = process.env.NODE_ENV;
         url: configService.get<string>('database.url'),
         // ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: true } : false,
         autoLoadEntities: true,
-        synchronize: false, // Set to false in production
+        synchronize: true, // Set to false in production
       }),
     }),
     ProductsModule,
