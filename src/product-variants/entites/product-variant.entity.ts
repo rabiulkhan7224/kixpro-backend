@@ -1,3 +1,4 @@
+import { Inventory } from 'src/inventory/entities/inventory.entity';
 import { Media } from 'src/medias/entities/media.entity';
 import { Product } from 'src/products/entities/product.entity';
 import {
@@ -94,11 +95,11 @@ export class ProductVariant extends BaseEntity {
   @JoinColumn({ name: 'product_id' })
   product: Product;
 
-  //   @OneToOne(() => Inventory, (inventory) => inventory.variant, {
-  //     cascade: true,
-  //     eager: false,
-  //   })
-  //   inventory: Inventory;
+  @OneToOne(() => Inventory, inventory => inventory.variant, {
+    cascade: true,
+    eager: false,
+  })
+  inventory: Inventory;
 
   @OneToMany(() => Media, media => media.variant, {
     eager: false,

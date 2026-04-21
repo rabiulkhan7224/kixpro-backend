@@ -12,8 +12,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
+import dbConfig from './config/db.config';
 import enviromentValidation from './config/enviroment.validation';
 import { dataSourceOptions } from './config/data-source.config';
+import { InventoryModule } from './inventory/inventory.module';
 
 // Get the current NODE_ENV
 const ENV = process.env.NODE_ENV;
@@ -25,7 +27,7 @@ const ENV = process.env.NODE_ENV;
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: !ENV ? '.env' : `.env.${ENV}`,
-      load: [appConfig, databaseConfig],
+      load: [appConfig, dbConfig, databaseConfig],
       validationSchema: enviromentValidation,
     }),
     TypeOrmModule.forRootAsync({
@@ -33,10 +35,14 @@ const ENV = process.env.NODE_ENV;
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        url: configService.get<string>('database.url'),
-        // ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: true } : false,
+        url: configService.get<string>('new-database.url'),
+        ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
         autoLoadEntities: true,
-        synchronize: true, // Set to false in production
+        synchronize: configService.get<string>('new-database.environment') !== 'production',
+        logging:
+          configService.get<string>('new-database.environment') !== 'production'
+            ? ['error', 'warn', 'migration']
+            : false,
       }),
     }),
     ProductsModule,
@@ -44,6 +50,7 @@ const ENV = process.env.NODE_ENV;
     CategoryModule,
     MediasModule,
     AuthModule,
+    InventoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
