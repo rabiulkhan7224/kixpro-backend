@@ -1,7 +1,7 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import express from 'express';
 
@@ -10,7 +10,7 @@ const server = express();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
   // Enable global CORS
-  app.enableCors();
+  app.enableCors('localhost:3000');
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -21,6 +21,7 @@ async function bootstrap() {
   /**
    * swagger configuration
    */
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   const config = new DocumentBuilder()
     .setTitle('NestJs backend  - kixpro E-Commerce Backend app API')
     .setDescription('Use the base API URL as http://localhost:3000')

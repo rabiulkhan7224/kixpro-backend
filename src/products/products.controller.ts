@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { ProductsService } from './products.service';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { ProductsService } from './products.service';
+import { ProductResponseDto } from './dto/product-response.dto';
 
 @ApiTags('Products')
 @Controller('products')
@@ -17,7 +18,7 @@ export class ProductsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all products' })
-  findAll() {
+  findAll(): Promise<ProductResponseDto[]> {
     return this.productsService.findAll();
   }
 

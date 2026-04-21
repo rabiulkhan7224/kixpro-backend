@@ -4,6 +4,9 @@ import { Repository } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
+import { ProductResponseDto } from './dto/product-response.dto';
+import { plainToInstance } from 'class-transformer';
+import { VariantResponseDto } from 'src/product-variants/dtos/variant-response.dto';
 
 @Injectable()
 export class ProductsService {
@@ -21,11 +24,14 @@ export class ProductsService {
     }
   }
 
-  async findAll() {
+  async findAll(): Promise<ProductResponseDto[]> {
     try {
-      return await this.productRepository.find({
+      const products = await this.productRepository.find({
         relations: ['category', 'collection', 'variants', 'media'],
       });
+
+      // Transform to response DTO with computed fields
+      return products.map(product => this.toResponseDto(product));
     } catch (error) {
       throw new InternalServerErrorException('Error fetching products');
     }
@@ -65,5 +71,31 @@ export class ProductsService {
     } catch (error) {
       throw new InternalServerErrorException('Error removing product');
     }
+  }
+
+  private toResponseDto(product: Product): ProductResponseDto {
+    const dto = plainToInstance(ProductResponseDto, product, {
+      excludeExtraneousValues: true,
+      // Ensure getters are evaluated
+      enableImplicitConversion: true,
+    });
+    // Enhance variants with inventory data
+    if (product.variants) {
+      dto.variants = product.variants.map(variant => {
+        const variantDto = plainToInstance(VariantResponseDto, variant, {
+          excludeExtraneousValues: true,
+        });
+        // variantDto.availableQuantity = variant.inventory?.quantity ?? 0;
+        // variantDto.inStock = variantDto.availableQuantity > 0 || (variant.inventory?.allowBackorder ?? false);
+        // variantDto.isLowStock = variant.inventory
+        //   ? variant.inventory.lowStockThreshold !== null &&
+        //     variant.inventory.quantity <= variant.inventory.lowStockThreshold &&
+        //     variant.inventory.quantity > 0
+        //   : false;
+        return variantDto;
+      });
+    }
+
+    return dto;
   }
 }
