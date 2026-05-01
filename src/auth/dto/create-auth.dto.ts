@@ -2,10 +2,10 @@ import { IsEmail, IsEmpty, IsNotEmpty, MinLength } from 'class-validator';
 
 export class CreateAuthDto {
   @IsEmail()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Email cannot be empty.' })
   email: string;
 
-  @MinLength(8)
   @IsNotEmpty()
+  @MinLength(8)
   password: string;
 }

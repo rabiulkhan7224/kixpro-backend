@@ -14,6 +14,11 @@ export class CreateCategoryDto {
 
   @ApiProperty({ description: 'description' })
   @IsString()
-  @IsNotEmpty()
-  description: string;
+  @IsOptional()
+  description?: string;
+
+  @ApiProperty({ description: 'image url for the category banner image' })
+  @IsString()
+  @IsOptional()
+  image?: string;
 }

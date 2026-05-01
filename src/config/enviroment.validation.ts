@@ -11,27 +11,4 @@ export default Joi.object({
     then: Joi.string().uri().required(),
     otherwise: Joi.string().optional(),
   }),
-
-  // Required in development; optional in production (DATABASE_URL is used instead)
-  DATABASE_HOST: Joi.when('NODE_ENV', {
-    is: 'development',
-    then: Joi.string().required(),
-    otherwise: Joi.string().optional(),
-  }),
-  DATABASE_PORT: Joi.number().port().default(5432),
-  DATABASE_USER: Joi.when('NODE_ENV', {
-    is: 'development',
-    then: Joi.string().required(),
-    otherwise: Joi.string().optional(),
-  }),
-  DATABASE_PASSWORD: Joi.when('NODE_ENV', {
-    is: 'development',
-    then: Joi.string().required(),
-    otherwise: Joi.string().optional(),
-  }),
-  DATABASE_NAME: Joi.when('NODE_ENV', {
-    is: 'development',
-    then: Joi.string().required(),
-    otherwise: Joi.string().optional(),
-  }),
 });

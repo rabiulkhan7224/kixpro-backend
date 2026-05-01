@@ -15,7 +15,7 @@ export class CategoryService {
   async create(createCategoryDto: CreateCategoryDto) {
     try {
       const category = this.categoryRepository.create(createCategoryDto);
-      console.log(category);
+
       return await this.categoryRepository.save(category);
     } catch (error) {
       if (error instanceof NotFoundException) throw error;

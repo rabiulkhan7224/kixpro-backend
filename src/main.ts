@@ -10,7 +10,11 @@ const server = express();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
   // Enable global CORS
-  app.enableCors('localhost:3000');
+  app.enableCors({
+    origin: '*', // Allow all origins (you can specify specific origins if needed)
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allowed HTTP methods
+    allowedHeaders: 'Content-Type, Accept', // Allowed headers
+  });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -18,6 +22,9 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  // use v1/api prefix for all routes
+  app.setGlobalPrefix('v1/api');
+
   /**
    * swagger configuration
    */
@@ -28,6 +35,7 @@ async function bootstrap() {
     .setTermsOfService('http://localhost:3000/terms-of-service')
     // https://kixpro-backend.vercel.app
     .addServer('http://localhost:3000')
+    .addServer('http://localhost:3001')
     .addServer('https://kixpro-backend.vercel.app')
     .setVersion('1.0')
     .build();

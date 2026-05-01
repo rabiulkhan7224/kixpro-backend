@@ -6,7 +6,6 @@ import {
   UpdateDateColumn,
   ManyToOne,
   OneToMany,
-  Index,
 } from 'typeorm';
 import { Product } from '../../products/entities/product.entity';
 
@@ -23,6 +22,9 @@ export class Category {
 
   @Column({ nullable: true })
   description?: string;
+
+  @Column({ nullable: true })
+  image?: string;
 
   @OneToMany(() => Product, product => product.category)
   products: Product[];

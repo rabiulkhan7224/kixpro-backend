@@ -77,7 +77,7 @@ export class ProductsService {
     const dto = plainToInstance(ProductResponseDto, product, {
       excludeExtraneousValues: true,
       // Ensure getters are evaluated
-      enableImplicitConversion: true,
+      // enableImplicitConversion: true,
     });
     // Enhance variants with inventory data
     if (product.variants) {
@@ -85,13 +85,13 @@ export class ProductsService {
         const variantDto = plainToInstance(VariantResponseDto, variant, {
           excludeExtraneousValues: true,
         });
-        // variantDto.availableQuantity = variant.inventory?.quantity ?? 0;
-        // variantDto.inStock = variantDto.availableQuantity > 0 || (variant.inventory?.allowBackorder ?? false);
-        // variantDto.isLowStock = variant.inventory
-        //   ? variant.inventory.lowStockThreshold !== null &&
-        //     variant.inventory.quantity <= variant.inventory.lowStockThreshold &&
-        //     variant.inventory.quantity > 0
-        //   : false;
+        variantDto.availableQuantity = variant.inventory?.quantity ?? 0;
+        variantDto.inStock = variantDto.availableQuantity > 0 || (variant.inventory?.allowBackorder ?? false);
+        variantDto.isLowStock = variant.inventory
+          ? variant.inventory.lowStockThreshold !== null &&
+            variant.inventory.quantity <= variant.inventory.lowStockThreshold &&
+            variant.inventory.quantity > 0
+          : false;
         return variantDto;
       });
     }

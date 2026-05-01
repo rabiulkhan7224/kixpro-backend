@@ -11,10 +11,8 @@ import { MediasModule } from './medias/medias.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import appConfig from './config/app.config';
-import databaseConfig from './config/database.config';
 import dbConfig from './config/db.config';
 import enviromentValidation from './config/enviroment.validation';
-import { dataSourceOptions } from './config/data-source.config';
 import { InventoryModule } from './inventory/inventory.module';
 
 // Get the current NODE_ENV
@@ -27,7 +25,7 @@ const ENV = process.env.NODE_ENV;
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: !ENV ? '.env' : `.env.${ENV}`,
-      load: [appConfig, dbConfig, databaseConfig],
+      load: [appConfig, dbConfig],
       validationSchema: enviromentValidation,
     }),
     TypeOrmModule.forRootAsync({
@@ -38,11 +36,8 @@ const ENV = process.env.NODE_ENV;
         url: configService.get<string>('new-database.url'),
         ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
         autoLoadEntities: true,
-        synchronize: configService.get<string>('new-database.environment') !== 'production',
-        logging:
-          configService.get<string>('new-database.environment') !== 'production'
-            ? ['error', 'warn', 'migration']
-            : false,
+        synchronize: true,
+        logging: process.env.NODE_ENV === 'development',
       }),
     }),
     ProductsModule,

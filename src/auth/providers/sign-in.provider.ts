@@ -3,6 +3,8 @@ import { UsersService } from 'src/users/users.service';
 import { HashingProvider } from './hashing.provider';
 import { GenerateTokensProvider } from './generate-tokens.provider';
 import { CreateAuthDto } from '../dto/create-auth.dto';
+import { CreateUserDto } from 'src/users/dtos/create-user.dto';
+import { SignInDto } from '../dto/signin.dto';
 
 @Injectable()
 export class SignInProvider {
@@ -22,7 +24,7 @@ export class SignInProvider {
     private readonly generateTokensProvider: GenerateTokensProvider,
   ) {}
 
-  public async signIn(signInDto: CreateAuthDto) {
+  public async signIn(signInDto: SignInDto) {
     // find user by email ID
     const user = await this.usersService.findOneByEmail(signInDto.email);
     // Throw exception if user is not found

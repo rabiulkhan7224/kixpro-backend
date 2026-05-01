@@ -7,7 +7,7 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { Collection } from '../../collections/collection.entity';
+import { Collection } from '../../collections/entities/collection.entity';
 import { Category } from '../../category/entities/category.entity';
 import { ProductVariant } from '../../product-variants/entites/product-variant.entity';
 import { Media } from '../../medias/entities/media.entity';

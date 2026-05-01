@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -10,9 +10,9 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Create a new category' })
   create(@Body() createCategoryDto: CreateCategoryDto) {
-    console.log(createCategoryDto);
     return this.categoryService.create(createCategoryDto);
   }
 

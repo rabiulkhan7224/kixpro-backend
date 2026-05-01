@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
-import { Product } from '../products/entities/product.entity';
+import { Product } from '../../products/entities/product.entity';
 
 @Entity('collections')
 export class Collection {
@@ -8,7 +8,10 @@ export class Collection {
 
   @Column()
   name: string;
-
+  @Column({
+    nullable: true,
+  })
+  images: string;
   @Column({ unique: true })
   slug: string;
 
