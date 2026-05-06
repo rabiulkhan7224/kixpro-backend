@@ -34,8 +34,9 @@ async function bootstrap() {
     .setDescription('Use the base API URL as http://localhost:3000')
     .setTermsOfService('http://localhost:3000/terms-of-service')
     // https://kixpro-backend.vercel.app
-    .addServer('http://localhost:3000')
     .addServer('http://localhost:3001')
+    .addServer('http://localhost:3000')
+
     .addServer('https://kixpro-backend.vercel.app')
     .setVersion('1.0')
     .build();

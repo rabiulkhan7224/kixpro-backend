@@ -12,6 +12,12 @@ services:
       - NODE_ENV=production
       - PORT=3000
       - DATABASE_URL=postgresql://postgres:password@database:5432/kixpro?sslmode=disable   # ← fixed
+       # JWT
+      - JWT_SECRET=Tgw1MWEhKIOU7MIhLkBlhtWXSODwWqPyEIuG
+      - JWT_TOKEN_AUDIENCE=myapp-users
+      - JWT_TOKEN_ISSUER=myapp-auth-service
+      - JWT_ACCESS_TOKEN_TTL=15m
+      - JWT_REFRESH_TOKEN_TTL=7d
     depends_on:
       database:
         condition: service_healthy

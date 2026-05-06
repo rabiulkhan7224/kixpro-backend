@@ -10,6 +10,7 @@ import { ConfigModule } from '@nestjs/config';
 import jwtConfig from './config/jwt.config';
 import { JwtModule } from '@nestjs/jwt';
 import { RefreshTokensProvider } from './providers/refresh-tokens.provider';
+import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   controllers: [AuthController],
@@ -20,6 +21,7 @@ import { RefreshTokensProvider } from './providers/refresh-tokens.provider';
       useClass: BcryptProvider,
     },
     SignInProvider,
+    JwtStrategy,
     GenerateTokensProvider,
     RefreshTokensProvider,
   ],

@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { SignInDto } from './dto/signin.dto';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { CreateUserDto } from 'src/users/dtos/create-user.dto';
+import { AuthService } from './auth.service';
+import { SignInDto } from './dto/signin.dto';
+import { JwtAuthGuard } from './jwt-auth/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -13,12 +13,12 @@ export class AuthController {
     private readonly authService: AuthService,
   ) {}
 
-  @Post('sign-in')
+  @Post('login')
   signIn(@Body() signInDto: SignInDto) {
     return this.authService.signIn(signInDto);
   }
 
-  @Post('sign-up')
+  @Post('signup')
   signUp(@Body() signUpDto: CreateUserDto) {
     return this.authService.signUp(signUpDto);
   }
@@ -28,5 +28,12 @@ export class AuthController {
     // This is just a placeholder. In a real application, you'd use authentication guards to protect this route and return the user's profile.
 
     return { message: 'This is the user profile endpoint' };
+  }
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  getMe(@Req() req) {
+    console.log(req);
+    return this.authService.getMe('some-user-id');
   }
 }

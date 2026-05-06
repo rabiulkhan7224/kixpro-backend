@@ -10,7 +10,7 @@ import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
-import { User } from './user.entity';
+import { User } from './entities/user.entity';
 import { CreateUserProvider } from './providers/create-user.provider';
 import { FindOneUserByEmailProvider } from './providers/find-one-user-by-email.provider';
 
@@ -73,7 +73,7 @@ export class UsersService {
     try {
       user = await this.usersRepository.findOne({
         where: { id },
-        select: { id: true, firstName: true, lastName: true, email: true },
+        select: { id: true, firstName: true, lastName: true, email: true, roles: true },
       });
     } catch {
       throw new RequestTimeoutException('Unable to process your request at the moment, please try again later.', {
@@ -111,5 +111,10 @@ export class UsersService {
    */
   public async findOneByEmail(email: string) {
     return this.findOneUserByEmailProvider.findOneByEmail(email);
+  }
+
+  // getMe is implemented in AuthService since it needs to return the full user profile, including email, and is only accessible to authenticated users.
+  public async getUserById(userId: string) {
+    return await this.findOneById(userId);
   }
 }

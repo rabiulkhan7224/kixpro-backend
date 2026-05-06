@@ -35,4 +35,8 @@ export class AuthService {
   public async signUp(createAuthDto: CreateUserDto) {
     return await this.usersService.createUser(createAuthDto);
   }
+
+  public async getMe(userId: string) {
+    return await this.usersService.getUserById(userId);
+  }
 }
