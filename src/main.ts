@@ -36,6 +36,8 @@ async function bootstrap() {
     // https://kixpro-backend.vercel.app
     .addServer('http://localhost:3001')
     .addServer('http://localhost:3000')
+    // auth bearer token authentication setup for swagger
+    .addBearerAuth()
 
     .addServer('https://kixpro-backend.vercel.app')
     .setVersion('1.0')

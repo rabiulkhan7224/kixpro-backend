@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MaxLength, minLength, MinLength } from 'class-validator';
 
 export class CreateUserDto {
@@ -15,7 +16,7 @@ export class CreateUserDto {
   @IsEmail()
   @IsNotEmpty({ message: 'Email cannot be empty.' })
   email: string;
-
+  @Exclude()
   @IsString()
   @IsNotEmpty()
   @MinLength(8)

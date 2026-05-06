@@ -11,6 +11,7 @@ import jwtConfig from './config/jwt.config';
 import { JwtModule } from '@nestjs/jwt';
 import { RefreshTokensProvider } from './providers/refresh-tokens.provider';
 import { JwtStrategy } from './jwt.strategy';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   controllers: [AuthController],
@@ -29,6 +30,7 @@ import { JwtStrategy } from './jwt.strategy';
     forwardRef(() => UsersModule),
     ConfigModule.forFeature(jwtConfig),
     JwtModule.registerAsync(jwtConfig.asProvider()),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
   exports: [AuthService, HashingProvider],
 })

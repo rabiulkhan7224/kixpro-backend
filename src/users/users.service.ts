@@ -13,6 +13,8 @@ import { UpdateUserDto } from './dtos/update-user.dto';
 import { User } from './entities/user.entity';
 import { CreateUserProvider } from './providers/create-user.provider';
 import { FindOneUserByEmailProvider } from './providers/find-one-user-by-email.provider';
+import { UserResponseDto } from 'src/auth/dto/userResponce.dto';
+import { plainToInstance } from 'class-transformer';
 
 /**
  * Service handling all business logic for the /users endpoint.
@@ -34,7 +36,8 @@ export class UsersService {
    * Create a new user – delegates to CreateUserProvider.
    */
   public async createUser(createUserDto: CreateUserDto) {
-    return this.createUserProvider.createUser(createUserDto);
+    //
+    return await this.createUserProvider.createUser(createUserDto);
   }
 
   /**
@@ -114,7 +117,15 @@ export class UsersService {
   }
 
   // getMe is implemented in AuthService since it needs to return the full user profile, including email, and is only accessible to authenticated users.
-  public async getUserById(userId: string) {
-    return await this.findOneById(userId);
+  async getUserById(userId: string): Promise<UserResponseDto> {
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return plainToInstance(UserResponseDto, user, {
+      excludeExtraneousValues: true,
+    });
   }
 }

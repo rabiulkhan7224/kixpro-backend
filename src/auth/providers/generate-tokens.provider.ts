@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { SignOptions } from 'jsonwebtoken';
 import jwtConfig from '../config/jwt.config';
 import type { ConfigType } from '@nestjs/config';
 import { User } from 'src/users/entities/user.entity';
@@ -20,18 +21,20 @@ export class GenerateTokensProvider {
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
   ) {}
 
-  public async signToken<T>(userId: string, expiresIn: number, payload?: T) {
+  public async signToken<T>(userId: string, expiresIn: string | number, payload?: T) {
+    const signOptions = {
+      audience: this.jwtConfiguration.audience,
+      issuer: this.jwtConfiguration.issuer,
+      secret: this.jwtConfiguration.secret,
+      expiresIn,
+    } as any;
+
     return await this.jwtService.signAsync(
       {
         sub: userId,
         ...payload,
       },
-      {
-        audience: this.jwtConfiguration.audience,
-        issuer: this.jwtConfiguration.issuer,
-        secret: this.jwtConfiguration.secret,
-        expiresIn,
-      },
+      signOptions,
     );
   }
 

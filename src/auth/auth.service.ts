@@ -5,6 +5,7 @@ import { RefreshTokensProvider } from './providers/refresh-tokens.provider';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { SignInDto } from './dto/signin.dto';
 import { CreateUserDto } from 'src/users/dtos/create-user.dto';
+import { UserResponseDto } from './dto/userResponce.dto';
 
 @Injectable()
 export class AuthService {
@@ -36,7 +37,7 @@ export class AuthService {
     return await this.usersService.createUser(createAuthDto);
   }
 
-  public async getMe(userId: string) {
+  public async getMe(userId: string): Promise<UserResponseDto> {
     return await this.usersService.getUserById(userId);
   }
 }

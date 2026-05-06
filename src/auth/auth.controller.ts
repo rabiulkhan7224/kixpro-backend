@@ -1,8 +1,10 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
 import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/signin.dto';
 import { JwtAuthGuard } from './jwt-auth/jwt-auth.guard';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { UserResponseDto } from './dto/userResponce.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -32,8 +34,16 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  getMe(@Req() req) {
-    console.log(req);
-    return this.authService.getMe('some-user-id');
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Get user me API',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: UserResponseDto,
+    description: 'Returns the profile of the authenticated user.',
+  })
+  getMe(@Req() req: any): Promise<UserResponseDto> {
+    return this.authService.getMe(req.user?.id);
   }
 }
