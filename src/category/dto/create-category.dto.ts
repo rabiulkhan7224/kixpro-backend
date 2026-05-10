@@ -7,10 +7,10 @@ export class CreateCategoryDto {
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty({ description: 'The unique slug for the category' })
-  @IsString()
-  @IsNotEmpty()
-  slug: string;
+  // @ApiProperty({ description: 'The unique slug for the category' })
+  // @IsString()
+  // @IsNotEmpty()
+  // slug: string;
 
   @ApiProperty({ description: 'description' })
   @IsString()

@@ -6,8 +6,10 @@ import {
   UpdateDateColumn,
   ManyToOne,
   OneToMany,
+  BeforeInsert,
 } from 'typeorm';
 import { Product } from '../../products/entities/product.entity';
+import slugify from 'slugify';
 
 @Entity('categories')
 export class Category {
@@ -34,4 +36,9 @@ export class Category {
 
   @UpdateDateColumn()
   updatedAt: Date;
+  // Automatically generate slug from name before inserting into the database and unique
+  @BeforeInsert()
+  generateSlug() {
+    this.slug = slugify(this.name, { lower: true, strict: true });
+  }
 }

@@ -25,7 +25,7 @@ export class CategoryService {
 
   async findAll() {
     try {
-      return await this.categoryRepository.find({});
+      return await this.categoryRepository.find({ relations: ['products'] });
     } catch (error) {
       throw new InternalServerErrorException('Error fetching categories');
     }
@@ -52,8 +52,7 @@ export class CategoryService {
     const category = await this.findOne(id);
 
     try {
-      if (updateCategoryDto.name) category.name = updateCategoryDto.name;
-      if (updateCategoryDto.slug) category.slug = updateCategoryDto.slug;
+      Object.assign(category, updateCategoryDto);
 
       return await this.categoryRepository.save(category);
     } catch (error) {

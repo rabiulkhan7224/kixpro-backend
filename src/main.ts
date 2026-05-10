@@ -4,6 +4,7 @@ import { AppModule } from './app.module';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import express from 'express';
+import { AllExceptionFilter } from './common/filters/all-exception.filter';
 
 const server = express();
 
@@ -46,7 +47,7 @@ async function bootstrap() {
   // Instantiate Document
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/api', app, document);
-
+  app.useGlobalFilters(new AllExceptionFilter());
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
