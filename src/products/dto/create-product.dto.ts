@@ -25,6 +25,13 @@ export class CreateProductDto {
   categoryId?: string;
 
   @ApiPropertyOptional({
+    description: 'The ID of the brand this product belongs to',
+  })
+  @IsUUID()
+  @IsOptional()
+  brandId?: string;
+
+  @ApiPropertyOptional({
     description: 'The ID of the collection this product belongs to',
   })
   @IsUUID()

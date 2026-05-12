@@ -36,7 +36,7 @@ export class CategoryService {
     try {
       category = await this.categoryRepository.findOne({
         where: { id },
-        relations: ['parentCategory', 'childCategories'],
+        relations: ['products'],
       });
     } catch (error) {
       throw new InternalServerErrorException('Error fetching category');

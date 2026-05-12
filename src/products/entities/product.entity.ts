@@ -11,6 +11,7 @@ import { Collection } from '../../collections/entities/collection.entity';
 import { Category } from '../../category/entities/category.entity';
 import { ProductVariant } from '../../product-variants/entites/product-variant.entity';
 import { Media } from '../../medias/entities/media.entity';
+import { Brand } from 'src/brand/entities/brand.entity';
 
 @Entity('products')
 export class Product {
@@ -37,7 +38,9 @@ export class Product {
   @Column({ nullable: true })
   mediaId: string;
   @Column({ nullable: true })
-  brand: string;
+  brandId: string;
+  @ManyToOne(() => Brand, brand => brand.products)
+  brand: Brand;
 
   @ManyToOne(() => Collection, collection => collection.products)
   collection: Collection;
