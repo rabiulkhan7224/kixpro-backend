@@ -19,6 +19,7 @@ export class ProductResponseDto {
   @Expose() description?: string;
   @Expose() createdAt: Date;
   @Expose() updatedAt: Date;
+  @Expose() images: string[];
 
   @Expose()
   @Type(() => CategoryDto)

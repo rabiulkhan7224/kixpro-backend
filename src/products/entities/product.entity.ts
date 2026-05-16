@@ -6,12 +6,14 @@ import {
   UpdateDateColumn,
   ManyToOne,
   OneToMany,
+  BeforeInsert,
 } from 'typeorm';
 import { Collection } from '../../collections/entities/collection.entity';
 import { Category } from '../../category/entities/category.entity';
-import { ProductVariant } from '../../product-variants/entites/product-variant.entity';
+import { ProductVariant } from '../../product-variants/entities/product-variant.entity';
 import { Media } from '../../medias/entities/media.entity';
 import { Brand } from 'src/brand/entities/brand.entity';
+import slugify from 'slugify';
 
 @Entity('products')
 export class Product {
@@ -23,6 +25,9 @@ export class Product {
 
   @Column({ unique: true })
   slug: string;
+
+  @Column('text', { array: true, nullable: true })
+  images: string[];
 
   @Column({ type: 'text', nullable: true })
   description: string;
@@ -51,8 +56,17 @@ export class Product {
   @OneToMany(() => Media, media => media.product)
   media: Media[];
 
+  status: 'active' | 'inactive' | 'archived' = 'active';
+
   @CreateDateColumn()
   createdAt: Date;
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @BeforeInsert()
+  // slug unique title and timestamp based and generated automatically from title
+  generateSlug() {
+    const timestamp = Date.now();
+    this.slug = slugify(`${this.title}-${timestamp}`, { lower: true, strict: true });
+  }
 }

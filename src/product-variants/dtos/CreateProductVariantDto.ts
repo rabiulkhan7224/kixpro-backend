@@ -1,14 +1,9 @@
-import { IsString, IsNotEmpty, IsNumber, IsOptional, IsObject, IsUUID, ValidateNested } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { CreateInventoryDto } from 'src/inventory/dto/create-inventory.dto';
 import { Type } from 'class-transformer';
+import { IsNotEmpty, IsNumber, IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { CreateInventoryDto } from 'src/inventory/dto/create-inventory.dto';
 
-export class CreateVariantDto {
-  @ApiProperty({ description: 'The ID of the product this variant belongs to' })
-  @IsUUID()
-  @IsNotEmpty()
-  productId: string;
-
+export class CreateProductVariantDto {
   @ApiProperty({ description: 'Stock Keeping Unit (SKU)' })
   @IsString()
   @IsNotEmpty()

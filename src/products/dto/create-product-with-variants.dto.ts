@@ -1,7 +1,14 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsArray, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsArray, IsNotEmpty, IsOptional, IsString, IsUUID, ValidateNested } from 'class-validator';
+import { CreateProductVariantDto } from 'src/product-variants/dtos/CreateProductVariantDto';
 
-export class CreateProductDto {
+export class CreateNestedVariantDto extends CreateProductVariantDto {
+  @ApiPropertyOptional({ format: 'uuid' }) // productId will be set by service
+  @IsOptional()
+  productId?: string;
+}
+export class CreateProductWithVariantsDto {
   @ApiProperty({ description: 'The title of the product' })
   @IsString()
   @IsNotEmpty()
@@ -45,7 +52,10 @@ export class CreateProductDto {
   @ApiPropertyOptional({
     description: 'The ID of the media associated with this product',
   })
-  @IsUUID()
+  @ApiPropertyOptional({ type: [CreateNestedVariantDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateNestedVariantDto)
   @IsOptional()
-  mediaId?: string;
+  variants?: CreateNestedVariantDto[];
 }

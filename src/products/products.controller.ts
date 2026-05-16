@@ -1,9 +1,10 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsService } from './products.service';
 import { ProductResponseDto } from './dto/product-response.dto';
+import { CreateProductWithVariantsDto } from './dto/create-product-with-variants.dto';
 
 @ApiTags('Products')
 @Controller('products')
@@ -13,7 +14,15 @@ export class ProductsController {
   @Post()
   @ApiOperation({ summary: 'Create a new product' })
   create(@Body() createProductDto: CreateProductDto) {
-    return this.productsService.create(createProductDto);
+    // Generate slug from title
+    return this.productsService.added(createProductDto);
+  }
+
+  @Post('with-variants')
+  @ApiOperation({ summary: 'Create a product with its variants in one request' })
+  @ApiResponse({ status: 201, description: 'Product created', type: ProductResponseDto })
+  async createWithVariants(@Body() dto: CreateProductWithVariantsDto): Promise<ProductResponseDto> {
+    return this.productsService.createWithVariants(dto);
   }
 
   @Get()

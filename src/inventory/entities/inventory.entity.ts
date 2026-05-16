@@ -1,4 +1,4 @@
-import { ProductVariant } from 'src/product-variants/entites/product-variant.entity';
+import { ProductVariant } from 'src/product-variants/entities/product-variant.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, UpdateDateColumn, Index } from 'typeorm';
 
 @Entity('inventory')
