@@ -1,10 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsService } from './products.service';
 import { ProductResponseDto } from './dto/product-response.dto';
 import { CreateProductWithVariantsDto } from './dto/create-product-with-variants.dto';
+import { FilterProductsDto } from './dto/filter-products.dto';
+import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
 
 @ApiTags('Products')
 @Controller('products')
@@ -26,9 +28,8 @@ export class ProductsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all products' })
-  findAll(): Promise<ProductResponseDto[]> {
-    return this.productsService.findAll();
+  async findAll(@Query() filters: FilterProductsDto): Promise<PaginatedResult<ProductResponseDto>> {
+    return this.productsService.findAll(filters);
   }
 
   @Get(':id')

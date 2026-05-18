@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { Brackets, DataSource, Repository } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
@@ -10,6 +10,8 @@ import { VariantResponseDto } from 'src/product-variants/dtos/variant-response.d
 import { CreateProductWithVariantsDto } from './dto/create-product-with-variants.dto';
 import { ProductVariant } from 'src/product-variants/entities/product-variant.entity';
 import { Inventory } from 'src/inventory/entities/inventory.entity';
+import { FilterProductsDto } from './dto/filter-products.dto';
+import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
 
 @Injectable()
 export class ProductsService {
@@ -91,14 +93,95 @@ export class ProductsService {
     }
   }
 
-  async findAll(): Promise<ProductResponseDto[]> {
+  async findAll(filters: FilterProductsDto): Promise<PaginatedResult<ProductResponseDto>> {
     try {
-      const products = await this.productsRepository.find({
-        relations: ['category', 'collection', 'variants', 'variants.inventory', 'media'],
-      });
+      // const products = await this.productsRepository.find({
+      //   relations: ['category', 'collection', 'variants', 'variants.inventory', 'media'],
+      // });
+
+      const query = this.productsRepository
+        .createQueryBuilder('product')
+        .leftJoinAndSelect('product.category', 'category')
+        .leftJoinAndSelect('product.collection', 'collection')
+        .leftJoinAndSelect('product.media', 'media')
+        .leftJoinAndSelect('product.variants', 'variant')
+        .leftJoinAndSelect('variant.inventory', 'inventory');
+
+      // ---------- FILTERS ----------
+      if (filters.categoryId) {
+        query.andWhere('product.categoryId = :categoryId', { categoryId: filters.categoryId });
+      }
+
+      if (filters.collectionId) {
+        query.andWhere('product.collectionId = :collectionId', { collectionId: filters.collectionId });
+      }
+
+      if (filters.search) {
+        query.andWhere(
+          new Brackets(qb => {
+            qb.where('product.title ILIKE :search', { search: `%${filters.search}%` }).orWhere(
+              'product.description ILIKE :search',
+              { search: `%${filters.search}%` },
+            );
+          }),
+        );
+      }
+      if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
+        query.andWhere(
+          `EXISTS (
+          SELECT 1 FROM product_variants pv
+          WHERE pv.product_id = product.id
+          AND pv.price BETWEEN :minPrice AND :maxPrice
+        )`,
+          {
+            minPrice: filters.minPrice ?? 0,
+            maxPrice: filters.maxPrice ?? 9999999,
+          },
+        );
+      }
+
+      if (filters.inStock) {
+        query.andWhere(
+          `EXISTS (
+          SELECT 1 FROM product_variants pv2
+          JOIN inventory inv ON inv.variant_id = pv2.id
+          WHERE pv2.product_id = product.id
+          AND (inv.quantity > 0 OR inv.allowBackorder = true)
+        )`,
+        );
+      }
+
+      // ---------- SORTING ----------
+      const allowedSortFields: Record<string, string> = {
+        title: 'product.title',
+        createdAt: 'product.createdAt',
+        // For price sorting you'd need grouping, here we keep it simple
+      };
+      if (filters.sortBy && allowedSortFields[filters.sortBy]) {
+        query.orderBy(allowedSortFields[filters.sortBy], filters.sortOrder);
+      } else {
+        query.orderBy('product.createdAt', 'DESC');
+      }
+
+      // ---------- PAGINATION ----------
+      const [products, total] = await query
+        .skip((filters.page - 1) * filters.limit)
+        .take(filters.limit)
+        .getManyAndCount();
+
+      // Transform to DTOs
+      const items = products.map(product => this.toResponseDto(product));
 
       // Transform to response DTO with computed fields
-      return products.map(product => this.toResponseDto(product));
+      return {
+        items,
+        meta: {
+          total,
+          page: filters.page,
+          limit: filters.limit || 20,
+          totalPages: Math.ceil(total / filters.limit),
+        },
+      };
     } catch (error) {
       throw new InternalServerErrorException('Error fetching products');
     }

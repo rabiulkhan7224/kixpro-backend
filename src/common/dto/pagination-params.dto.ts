@@ -13,7 +13,7 @@ export class PaginationParamsDto {
   @IsInt()
   @Min(1)
   @IsOptional()
-  page?: number = 1;
+  page: number = 1;
 
   @ApiPropertyOptional({ default: 20 })
   @Type(() => Number)
@@ -21,7 +21,7 @@ export class PaginationParamsDto {
   @Min(1)
   @Max(100)
   @IsOptional()
-  limit?: number = 20;
+  limit: number = 20;
 
   @ApiPropertyOptional({ description: 'Sort field' })
   @IsString()
