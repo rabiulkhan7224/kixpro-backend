@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsNumber, IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
-import { CreateInventoryDto } from 'src/inventory/dto/create-inventory.dto';
+import { CreateInventoryWihVariantDto } from 'src/inventory/dto/createInventoryWith-variant.dto';
 
 export class CreateProductVariantDto {
   @ApiProperty({ description: 'Stock Keeping Unit (SKU)' })
@@ -87,9 +87,9 @@ export class CreateProductVariantDto {
   // inventory
 
   // ---- Inventory (replaces the old "stock" field) ----
-  @ApiPropertyOptional({ type: CreateInventoryDto })
+  @ApiPropertyOptional({ type: CreateInventoryWihVariantDto, description: 'Inventory details for the product variant' })
   @IsOptional()
-  @ValidateNested()
-  @Type(() => CreateInventoryDto)
-  inventory?: CreateInventoryDto;
+  @ValidateNested({ each: true })
+  @Type(() => CreateInventoryWihVariantDto)
+  inventory?: CreateInventoryWihVariantDto;
 }

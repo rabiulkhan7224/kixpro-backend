@@ -7,6 +7,7 @@ import {
   ManyToOne,
   OneToMany,
   BeforeInsert,
+  Index,
 } from 'typeorm';
 import { Collection } from '../../collections/entities/collection.entity';
 import { Category } from '../../category/entities/category.entity';
@@ -16,6 +17,12 @@ import { Brand } from 'src/brand/entities/brand.entity';
 import slugify from 'slugify';
 
 @Entity('products')
+@Index(['id'])
+@Index(['slug'])
+@Index(['categoryId'])
+@Index(['collectionId'])
+@Index(['brandId'])
+@Index(['mediaId'])
 export class Product {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -56,8 +63,8 @@ export class Product {
   @OneToMany(() => Media, media => media.product)
   media: Media[];
 
-  status: 'active' | 'inactive' | 'archived' = 'active';
-
+  @Column({ type: 'enum', enum: ['active', 'inactive', 'archived'], default: 'active' })
+  status: 'active' | 'inactive' | 'archived';
   @CreateDateColumn()
   createdAt: Date;
   @UpdateDateColumn()

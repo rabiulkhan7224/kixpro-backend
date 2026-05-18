@@ -46,7 +46,11 @@ async function bootstrap() {
 
   // Instantiate Document
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('/api', app, document);
+  SwaggerModule.setup('/api', app, document, {
+    swaggerOptions: {
+      displayRequestDuration: true,
+    },
+  });
   app.useGlobalFilters(new AllExceptionFilter());
   await app.listen(process.env.PORT ?? 3000);
 }

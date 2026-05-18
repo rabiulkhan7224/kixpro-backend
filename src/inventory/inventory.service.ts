@@ -16,8 +16,12 @@ export class InventoryService {
     return await this.inventoryRepository.save(inventory);
   }
 
-  findAll() {
-    return `This action returns all inventory`;
+  async findAll() {
+    const query = this.inventoryRepository
+      .createQueryBuilder('inventory')
+      .leftJoinAndSelect('inventory.variant', 'variant')
+      .leftJoinAndSelect('variant.product', 'product');
+    return await query.getMany();
   }
 
   findOne(id: number) {

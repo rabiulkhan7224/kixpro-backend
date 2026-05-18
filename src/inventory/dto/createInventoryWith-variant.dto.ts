@@ -1,13 +1,11 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, Min } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 
-// -- Nested Inventory DTO (re-usable) --
-export class CreateInventoryDto {
-  // variantId
+export class CreateInventoryWihVariantDto {
   @ApiPropertyOptional({ description: 'ID of the product variant' })
-  @IsNotEmpty()
-  @IsNumber()
-  variantId: string;
+  @IsOptional()
+  @IsString()
+  variantId?: string;
 
   @ApiPropertyOptional({ default: 0 })
   @IsOptional()

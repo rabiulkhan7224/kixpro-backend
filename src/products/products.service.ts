@@ -34,6 +34,7 @@ export class ProductsService {
   // products.service.ts (add inside ProductService)
 
   async createWithVariants(dto: CreateProductWithVariantsDto): Promise<ProductResponseDto> {
+    console.log('Creating product with variants:', dto);
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -49,31 +50,27 @@ export class ProductsService {
         images: dto.images,
       });
       const savedProduct = await queryRunner.manager.save(product);
-
+      console.log('saveproduct result', savedProduct);
       // 2. Create variants and their inventories
       const variants: ProductVariant[] = [];
       if (dto.variants?.length) {
         for (const variantDto of dto.variants) {
-          const variant = this.variantsRepository.create({
-            ...variantDto,
+          // Destructure inventory to exclude from variant creation
+          const { inventory: inventoryDto, ...variantData } = variantDto;
 
+          const variant = this.variantsRepository.create({
+            ...variantData,
             productId: savedProduct.id,
-            // ensure productId is set, ignore from dto
           });
           const savedVariant = await queryRunner.manager.save(variant);
 
-          // Create inventory if provided
-          if (variantDto.inventory) {
-            const inventory = this.inventoryRepository.create({
-              ...variantDto.inventory,
-              variantId: savedVariant.id,
-            });
-            await queryRunner.manager.save(inventory);
-          } else {
-            // Optionally create a default inventory (quantity 0)
+          // Create inventory with all fields
+          if (inventoryDto) {
             const inventory = this.inventoryRepository.create({
               variantId: savedVariant.id,
-              quantity: 0,
+              quantity: inventoryDto.quantity ?? 0,
+              lowStockThreshold: inventoryDto.lowStockThreshold,
+              allowBackorder: inventoryDto.allowBackorder ?? false,
             });
             await queryRunner.manager.save(inventory);
           }
@@ -87,6 +84,7 @@ export class ProductsService {
       return this.findOne(savedProduct.id);
     } catch (error) {
       await queryRunner.rollbackTransaction();
+      console.log('Error creating product with variants:', error);
       throw error; // will be caught by global filter
     } finally {
       await queryRunner.release();
@@ -96,7 +94,7 @@ export class ProductsService {
   async findAll(): Promise<ProductResponseDto[]> {
     try {
       const products = await this.productsRepository.find({
-        relations: ['category', 'collection', 'variants', 'media'],
+        relations: ['category', 'collection', 'variants', 'variants.inventory', 'media'],
       });
 
       // Transform to response DTO with computed fields
@@ -111,7 +109,7 @@ export class ProductsService {
     try {
       product = await this.productsRepository.findOne({
         where: { id },
-        relations: ['category', 'collection', 'variants', 'media'],
+        relations: ['category', 'collection', 'variants', 'variants.inventory', 'media'],
       });
     } catch (error) {
       throw new InternalServerErrorException('Error fetching product');

@@ -95,10 +95,7 @@ export class ProductVariant extends BaseEntity {
   @JoinColumn({ name: 'product_id' })
   product: Product;
 
-  @OneToOne(() => Inventory, inventory => inventory.variant, {
-    cascade: true,
-    eager: false,
-  })
+  @OneToOne(() => Inventory, inventory => inventory.variant, {})
   inventory: Inventory;
 
   @OneToMany(() => Media, media => media.variant, {
@@ -128,15 +125,19 @@ export class ProductVariant extends BaseEntity {
   }
 
   get availableQuantity(): number {
-    return 0; // TODO: connect to inventory entity
+    return this.inventory?.quantity ?? 0;
   }
 
   get inStock(): boolean {
-    return false; // TODO: connect to inventory entity
+    const qty = this.availableQuantity;
+    return qty > 0 || (this.inventory?.allowBackorder ?? false);
   }
 
   get isLowStock(): boolean {
-    return false; // TODO: connect to inventory entity
+    if (!this.inventory) return false;
+    const threshold = this.inventory.lowStockThreshold;
+    if (threshold === null || threshold === undefined) return false;
+    return this.inventory.quantity > 0 && this.inventory.quantity <= threshold;
   }
 
   // Generate SKU if not provided
