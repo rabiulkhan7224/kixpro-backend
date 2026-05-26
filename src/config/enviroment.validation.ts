@@ -5,10 +5,26 @@ export default Joi.object({
 
   PORT: Joi.number().port().default(3000),
 
-  // Required only in production; optional in development where individual fields are used
-  DATABASE_URL: Joi.when('NODE_ENV', {
-    is: 'production',
-    then: Joi.string().uri().required(),
-    otherwise: Joi.string().optional(),
+  DATABASE_URL: Joi.string().uri().optional(),
+  DB_HOST: Joi.string().when('DATABASE_URL', {
+    is: Joi.exist(),
+    then: Joi.optional(),
+    otherwise: Joi.required(),
+  }),
+  DB_PORT: Joi.number().port().default(5432),
+  DB_USERNAME: Joi.string().when('DATABASE_URL', {
+    is: Joi.exist(),
+    then: Joi.optional(),
+    otherwise: Joi.required(),
+  }),
+  DB_PASSWORD: Joi.string().when('DATABASE_URL', {
+    is: Joi.exist(),
+    then: Joi.optional(),
+    otherwise: Joi.required(),
+  }),
+  DB_NAME: Joi.string().when('DATABASE_URL', {
+    is: Joi.exist(),
+    then: Joi.optional(),
+    otherwise: Joi.required(),
   }),
 });

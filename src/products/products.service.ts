@@ -68,13 +68,18 @@ export class ProductsService {
 
           // Create inventory with all fields
           if (inventoryDto) {
-            const inventory = this.inventoryRepository.create({
-              variantId: savedVariant.id,
-              quantity: inventoryDto.quantity ?? 0,
-              lowStockThreshold: inventoryDto.lowStockThreshold,
-              allowBackorder: inventoryDto.allowBackorder ?? false,
+            const existing = await queryRunner.manager.findOne(Inventory, {
+              where: { variantId: savedVariant.id },
             });
-            await queryRunner.manager.save(inventory);
+            if (!existing) {
+              const inventory = this.inventoryRepository.create({
+                variantId: savedVariant.id,
+                quantity: inventoryDto.quantity ?? 0,
+                lowStockThreshold: inventoryDto.lowStockThreshold,
+                allowBackorder: inventoryDto.allowBackorder ?? false,
+              });
+              await queryRunner.manager.save(inventory);
+            }
           }
           variants.push(savedVariant);
         }
@@ -95,15 +100,10 @@ export class ProductsService {
 
   async findAll(filters: FilterProductsDto): Promise<PaginatedResult<ProductResponseDto>> {
     try {
-      // const products = await this.productsRepository.find({
-      //   relations: ['category', 'collection', 'variants', 'variants.inventory', 'media'],
-      // });
-
       const query = this.productsRepository
         .createQueryBuilder('product')
         .leftJoinAndSelect('product.category', 'category')
         .leftJoinAndSelect('product.collection', 'collection')
-        .leftJoinAndSelect('product.media', 'media')
         .leftJoinAndSelect('product.variants', 'variant')
         .leftJoinAndSelect('variant.inventory', 'inventory');
 
@@ -174,7 +174,8 @@ export class ProductsService {
 
       // Transform to response DTO with computed fields
       return {
-        items,
+        success: true,
+        data: items,
         meta: {
           total,
           page: filters.page,
@@ -187,39 +188,30 @@ export class ProductsService {
     }
   }
 
-  async findOne(id: string) {
-    let product;
-    try {
-      product = await this.productsRepository.findOne({
-        where: { id },
-        relations: ['category', 'collection', 'variants', 'variants.inventory', 'media'],
-      });
-    } catch (error) {
-      throw new InternalServerErrorException('Error fetching product');
-    }
-
-    if (!product) {
-      throw new NotFoundException(`Product with ID ${id} not found`);
-    }
-    return product;
+  async findOne(id: string): Promise<ProductResponseDto> {
+    const product = await this.productsRepository.findOne({
+      where: { id },
+      relations: ['category', 'collection', 'variants', 'variants.inventory'],
+    });
+    if (!product) throw new NotFoundException();
+    return this.toResponseDto(product);
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto) {
-    const product = await this.findOne(id);
-    Object.assign(product, updateProductDto);
-    try {
-      return await this.productsRepository.save(product);
-    } catch (error) {
-      throw new InternalServerErrorException('Error updating product');
-    }
+  async update(id: string, dto: UpdateProductDto): Promise<ProductResponseDto> {
+    const product = await this.productsRepository.findOne({ where: { id } });
+    if (!product) throw new NotFoundException();
+    Object.assign(product, dto);
+    const updated = await this.productsRepository.save(product);
+    return this.toResponseDto(updated);
   }
 
-  async remove(id: string) {
+  async delete(id: string) {
     const product = await this.findOne(id);
+
     try {
-      return await this.productsRepository.remove(product);
+      return await this.productsRepository.delete(product.id);
     } catch (error) {
-      throw new InternalServerErrorException('Error removing product');
+      throw new InternalServerErrorException('Error deleting product');
     }
   }
 

@@ -5,6 +5,7 @@ import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import express from 'express';
 import { AllExceptionFilter } from './common/filters/all-exception.filter';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 
 const server = express();
 
@@ -29,7 +30,12 @@ async function bootstrap() {
   /**
    * swagger configuration
    */
+  //  Request-duration logging interceptor
+  app.useGlobalInterceptors(new LoggingInterceptor());
+
+  // --- Global Serialization  ---
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+  // --- Swagger Setup ---
   const config = new DocumentBuilder()
     .setTitle('NestJs backend  - kixpro E-Commerce Backend app API')
     .setDescription('Use the base API URL as http://localhost:3000')
@@ -51,6 +57,7 @@ async function bootstrap() {
       displayRequestDuration: true,
     },
   });
+  // Global Exception Filter
   app.useGlobalFilters(new AllExceptionFilter());
   await app.listen(process.env.PORT ?? 3000);
 }

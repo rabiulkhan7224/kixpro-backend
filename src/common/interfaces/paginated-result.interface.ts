@@ -1,5 +1,6 @@
 export interface PaginatedResult<T> {
-  items: T[];
+  success: boolean;
+  data: T[];
   meta: {
     total: number;
     page: number;

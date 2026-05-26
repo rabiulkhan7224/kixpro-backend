@@ -7,15 +7,16 @@ export class CreateCollectionDto {
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty({ description: 'The unique slug for the collection' })
-  @IsString()
-  @IsNotEmpty()
-  slug: string;
-
   @ApiPropertyOptional({
     description: 'Optional description of the collection',
   })
   @IsString()
   @IsOptional()
   description?: string;
+  @ApiPropertyOptional({
+    description: 'Optional image URL for the collection banner',
+  })
+  @IsString()
+  @IsOptional()
+  image?: string;
 }

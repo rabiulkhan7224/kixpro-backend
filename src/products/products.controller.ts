@@ -7,6 +7,7 @@ import { ProductResponseDto } from './dto/product-response.dto';
 import { CreateProductWithVariantsDto } from './dto/create-product-with-variants.dto';
 import { FilterProductsDto } from './dto/filter-products.dto';
 import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
+import { PaginatedResponseDto } from 'src/common/dto/paginated-response.dto';
 
 @ApiTags('Products')
 @Controller('products')
@@ -26,7 +27,10 @@ export class ProductsController {
   async createWithVariants(@Body() dto: CreateProductWithVariantsDto): Promise<ProductResponseDto> {
     return this.productsService.createWithVariants(dto);
   }
-
+  @ApiResponse({
+    status: 200,
+    type: PaginatedResponseDto(ProductResponseDto),
+  })
   @Get()
   async findAll(@Query() filters: FilterProductsDto): Promise<PaginatedResult<ProductResponseDto>> {
     return this.productsService.findAll(filters);
@@ -34,7 +38,7 @@ export class ProductsController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a product by ID' })
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string): Promise<ProductResponseDto> {
     return this.productsService.findOne(id);
   }
 
@@ -46,7 +50,7 @@ export class ProductsController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a product by ID' })
-  remove(@Param('id') id: string) {
-    return this.productsService.remove(id);
+  delete(@Param('id') id: string) {
+    return this.productsService.delete(id);
   }
 }
