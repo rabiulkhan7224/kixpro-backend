@@ -15,6 +15,7 @@ import dbConfig from './config/db.config';
 import enviromentValidation from './config/enviroment.validation';
 import { InventoryModule } from './inventory/inventory.module';
 import { BrandModule } from './brand/brand.module';
+import { CartModule } from './cart/cart.module';
 
 // Get the current NODE_ENV
 const ENV = process.env.NODE_ENV;
@@ -48,6 +49,7 @@ const ENV = process.env.NODE_ENV;
     AuthModule,
     InventoryModule,
     BrandModule,
+    CartModule,
   ],
   controllers: [AppController],
   providers: [AppService],
