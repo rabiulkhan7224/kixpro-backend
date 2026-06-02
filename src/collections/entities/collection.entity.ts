@@ -16,7 +16,7 @@ export class Collection {
   id: string;
 
   @Column()
-  name: string;
+  title: string;
   @Column({
     nullable: true,
   })
@@ -36,11 +36,11 @@ export class Collection {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  // Automatically generate slug from name before inserting into the database
+  // Automatically generate slug from title before inserting into the database
   // and ensure it's unique by appending a short random string if necessary
   @BeforeInsert()
   generateSlug() {
     const timestamp = Date.now();
-    this.slug = slugify(`${this.name}-${timestamp}`, { lower: true, strict: true });
+    this.slug = slugify(`${this.title}-${timestamp}`, { lower: true, strict: true });
   }
 }

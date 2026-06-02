@@ -38,7 +38,8 @@ const ENV = process.env.NODE_ENV;
         url: configService.get<string>('new-database.url'),
         ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
         autoLoadEntities: true,
-        synchronize: true,
+        synchronize: process.env.NODE_ENV !== 'production',
+
         logging: process.env.NODE_ENV === 'development',
       }),
     }),

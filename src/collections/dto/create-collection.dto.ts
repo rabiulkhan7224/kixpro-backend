@@ -18,5 +18,5 @@ export class CreateCollectionDto {
   })
   @IsString()
   @IsOptional()
-  image?: string;
+  images?: string;
 }
