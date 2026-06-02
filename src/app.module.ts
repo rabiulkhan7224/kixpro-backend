@@ -16,6 +16,7 @@ import enviromentValidation from './config/enviroment.validation';
 import { InventoryModule } from './inventory/inventory.module';
 import { BrandModule } from './brand/brand.module';
 import { CartModule } from './cart/cart.module';
+import { OrdersModule } from './orders/orders.module';
 
 // Get the current NODE_ENV
 const ENV = process.env.NODE_ENV;
@@ -51,6 +52,7 @@ const ENV = process.env.NODE_ENV;
     InventoryModule,
     BrandModule,
     CartModule,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
