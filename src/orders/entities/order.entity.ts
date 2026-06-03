@@ -13,15 +13,7 @@ import {
 import { User } from '../../users/entities/user.entity';
 import { OrderItem } from './order-item.entity';
 import { OrderStatusHistory } from './order-status-history.entity';
-
-export enum OrderStatus {
-  PENDING = 'PENDING',
-  CONFIRMED = 'CONFIRMED',
-  PROCESSING = 'PROCESSING',
-  SHIPPED = 'SHIPPED',
-  DELIVERED = 'DELIVERED',
-  CANCELLED = 'CANCELLED',
-}
+import { OrderStatus } from './order-status.enum';
 
 @Entity('orders')
 @Index(['userId'])

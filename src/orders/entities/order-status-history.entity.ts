@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
-import { Order, OrderStatus } from './order.entity';
+import { Order } from './order.entity';
+import { OrderStatus } from './order-status.enum';
 
 @Entity('order_status_history')
 export class OrderStatusHistory {
@@ -12,7 +13,11 @@ export class OrderStatusHistory {
   @Column()
   orderId: string;
 
-  @Column('enum', { enum: OrderStatus })
+  @Column({
+    type: 'enum',
+    enum: OrderStatus,
+    default: OrderStatus.PENDING,
+  })
   status: OrderStatus;
 
   @Column({ type: 'text', nullable: true })
