@@ -196,6 +196,14 @@ export class ProductsService {
     if (!product) throw new NotFoundException();
     return this.toResponseDto(product);
   }
+  async findBySlug(slug: string): Promise<ProductResponseDto> {
+    const product = await this.productsRepository.findOne({
+      where: { slug },
+      relations: ['category', 'collection', 'variants', 'variants.inventory', 'brand'],
+    });
+    if (!product) throw new NotFoundException();
+    return this.toResponseDto(product);
+  }
 
   async update(id: string, dto: UpdateProductDto): Promise<ProductResponseDto> {
     const product = await this.productsRepository.findOne({ where: { id } });

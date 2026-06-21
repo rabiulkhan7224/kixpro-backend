@@ -41,6 +41,12 @@ export class ProductsController {
   findOne(@Param('id') id: string): Promise<ProductResponseDto> {
     return this.productsService.findOne(id);
   }
+  //  find by slug
+  @Get('slug/:slug')
+  @ApiOperation({ summary: 'Get a product by slug' })
+  findBySlug(@Param('slug') slug: string): Promise<ProductResponseDto> {
+    return this.productsService.findBySlug(slug);
+  }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a product by ID' })

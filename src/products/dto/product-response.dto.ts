@@ -6,10 +6,19 @@ class CategoryDto {
   @Expose() name: string;
 }
 
+class CollectionDto {
+  @Expose() id: string;
+  @Expose() title: string;
+}
+
 class MediaDto {
   @Expose() id: string;
   @Expose() url: string;
   @Expose() alt?: string;
+}
+class brandDTO {
+  @Expose() id: string;
+  @Expose() name: string;
 }
 
 export class ProductResponseDto {
@@ -26,8 +35,11 @@ export class ProductResponseDto {
   category?: CategoryDto;
 
   @Expose()
-  @Type(() => CategoryDto)
-  collection?: CategoryDto;
+  @Type(() => CollectionDto)
+  collection?: CollectionDto;
+  @Expose()
+  @Type(() => brandDTO)
+  brand?: brandDTO;
 
   @Expose()
   @Type(() => MediaDto)

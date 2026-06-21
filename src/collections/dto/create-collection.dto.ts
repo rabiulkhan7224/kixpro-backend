@@ -2,10 +2,10 @@ import { IsString, IsOptional, IsNotEmpty } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateCollectionDto {
-  @ApiProperty({ description: 'The name of the collection' })
+  @ApiProperty({ description: 'The title of the collection' })
   @IsString()
   @IsNotEmpty()
-  name: string;
+  title: string;
 
   @ApiPropertyOptional({
     description: 'Optional description of the collection',
