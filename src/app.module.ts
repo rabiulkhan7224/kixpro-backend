@@ -17,6 +17,8 @@ import { InventoryModule } from './inventory/inventory.module';
 import { BrandModule } from './brand/brand.module';
 import { CartModule } from './cart/cart.module';
 import { OrdersModule } from './orders/orders.module';
+import { PaymentsModule } from './payments/payments.module';
+import { ShippingModule } from './shipping/shipping.module';
 
 // Get the current NODE_ENV
 const ENV = process.env.NODE_ENV;
@@ -53,6 +55,8 @@ const ENV = process.env.NODE_ENV;
     BrandModule,
     CartModule,
     OrdersModule,
+    PaymentsModule,
+    ShippingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

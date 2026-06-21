@@ -7,6 +7,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -14,6 +15,8 @@ import { User } from '../../users/entities/user.entity';
 import { OrderItem } from './order-item.entity';
 import { OrderStatusHistory } from './order-status-history.entity';
 import { OrderStatus } from './order-status.enum';
+import { ShippingAddress } from 'src/shipping/entities/shipping-address.entity';
+import { Payment } from 'src/payments/entities/payment.entity';
 
 @Entity('orders')
 @Index(['userId'])
@@ -45,16 +48,15 @@ export class Order {
   notes: string;
 
   // Shipping address – either inline or via relation (shown as relation)
-  //   @ManyToOne(() => ShippingAddress, { nullable: true, eager: true })
-  //   @JoinColumn({ name: 'shippingAddressId' })
-  //   shippingAddress: ShippingAddress;
+  @ManyToOne(() => ShippingAddress, { nullable: true, eager: true })
+  @JoinColumn({ name: 'shippingAddressId' })
+  shippingAddress: ShippingAddress;
 
   @Column({ nullable: true })
   shippingAddressId: string;
 
-  // Payment may be created later
-  //   @OneToOne(() => Payment, (payment) => payment.order, { nullable: true })
-  //   payment: Payment;
+  @OneToOne(() => Payment, payment => payment.order, { nullable: true })
+  payment: Payment;
 
   // Items
   @OneToMany(() => OrderItem, item => item.order, { cascade: true })
