@@ -62,7 +62,11 @@ export class Product {
 
   @OneToMany(() => Media, media => media.product)
   media: Media[];
+  @Column({ type: 'decimal', precision: 3, scale: 2, default: 0 })
+  averageRating: number;
 
+  @Column({ type: 'int', default: 0 })
+  reviewCount: number;
   @Column({ type: 'enum', enum: ['active', 'inactive', 'archived'], default: 'active' })
   status: 'active' | 'inactive' | 'archived';
   @CreateDateColumn()

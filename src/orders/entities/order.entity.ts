@@ -1,4 +1,3 @@
-// orders/entities/order.entity.ts
 import {
   Column,
   CreateDateColumn,
