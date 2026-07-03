@@ -14,7 +14,7 @@ export class UserResponseDto {
   email: string;
 
   @Expose()
-  roles: string;
+  role: string;
   @Expose()
   get fullName(): string {
     return `${this.firstName} ${this.lastName}`;

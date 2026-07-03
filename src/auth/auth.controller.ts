@@ -5,6 +5,10 @@ import { SignInDto } from './dto/signin.dto';
 import { JwtAuthGuard } from './jwt-auth/jwt-auth.guard';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { UserResponseDto } from './dto/userResponce.dto';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { RolesGuard } from './guards/roles/roles.guard';
+import { Roles } from './decorators/roles.decorator';
+import { Role } from 'src/common/enums/roles.enum';
 
 @Controller('auth')
 export class AuthController {
@@ -26,14 +30,15 @@ export class AuthController {
   }
 
   @Get('profile')
+  @UseGuards(AuthGuard)
   getProfile() {
     // This is just a placeholder. In a real application, you'd use authentication guards to protect this route and return the user's profile.
 
     return { message: 'This is the user profile endpoint' };
   }
-
+  @Roles(Role.USER) // Example roles, adjust as needed
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('me')
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Get user me API',

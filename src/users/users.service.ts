@@ -76,7 +76,7 @@ export class UsersService {
     try {
       user = await this.usersRepository.findOne({
         where: { id },
-        select: { id: true, firstName: true, lastName: true, email: true, roles: true },
+        select: { id: true, firstName: true, lastName: true, email: true, role: true },
       });
     } catch {
       throw new RequestTimeoutException('Unable to process your request at the moment, please try again later.', {

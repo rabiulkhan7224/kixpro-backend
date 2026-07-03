@@ -1,5 +1,4 @@
-import { Exclude } from 'class-transformer';
-import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MaxLength, minLength, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
@@ -16,13 +15,8 @@ export class CreateUserDto {
   @IsEmail()
   @IsNotEmpty({ message: 'Email cannot be empty.' })
   email: string;
-  @Exclude()
   @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Password must be required' })
   @MinLength(8)
-  @Matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, {
-    message:
-      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
-  })
   password: string;
 }

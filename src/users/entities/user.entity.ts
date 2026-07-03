@@ -1,12 +1,6 @@
 import { Exclude } from 'class-transformer';
+import { Role } from 'src/common/enums/roles.enum';
 import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
-
-export enum UserRole {
-  ADMIN = 'admin',
-  USER = 'user',
-  SELLER = 'seller',
-  EMPLOYEE = 'employee',
-}
 
 @Entity()
 @Index(['email', 'id'], { unique: true })
@@ -28,11 +22,11 @@ export class User {
 
   @Column({
     type: 'enum',
-    enum: UserRole,
-    default: UserRole.USER,
+    enum: Role,
+    default: Role.USER,
     nullable: false,
   })
-  roles: UserRole;
+  role: Role;
 
   @Exclude()
   @Column({ type: 'varchar', length: 255, nullable: true, default: null })

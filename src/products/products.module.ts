@@ -7,10 +7,11 @@ import { ProductVariant } from 'src/product-variants/entities/product-variant.en
 import { Inventory } from 'src/inventory/entities/inventory.entity';
 import { Category } from 'src/category/entities/category.entity';
 import { Collection } from 'src/collections/entities/collection.entity';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   controllers: [ProductsController],
   providers: [ProductsService],
-  imports: [TypeOrmModule.forFeature([Product, ProductVariant, Inventory, Category, Collection])],
+  imports: [AuthModule, TypeOrmModule.forFeature([Product, ProductVariant, Inventory, Category, Collection])],
 })
 export class ProductsModule {}

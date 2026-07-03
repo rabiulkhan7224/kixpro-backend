@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsService } from './products.service';
@@ -8,6 +8,7 @@ import { CreateProductWithVariantsDto } from './dto/create-product-with-variants
 import { FilterProductsDto } from './dto/filter-products.dto';
 import { PaginatedResult } from 'src/common/interfaces/paginated-result.interface';
 import { PaginatedResponseDto } from 'src/common/dto/paginated-response.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth/jwt-auth.guard';
 
 @ApiTags('Products')
 @Controller('products')
@@ -27,6 +28,7 @@ export class ProductsController {
   async createWithVariants(@Body() dto: CreateProductWithVariantsDto): Promise<ProductResponseDto> {
     return this.productsService.createWithVariants(dto);
   }
+
   @ApiResponse({
     status: 200,
     type: PaginatedResponseDto(ProductResponseDto),
