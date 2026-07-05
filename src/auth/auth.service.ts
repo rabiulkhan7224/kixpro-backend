@@ -8,6 +8,7 @@ import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 import { UserResponseDto } from './dto/userResponce.dto';
 import { CurrentUser } from './types/current-user';
 import { Role } from 'src/common/enums/roles.enum';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +21,8 @@ export class AuthService {
      * Inject the signInProvider
      */
     private readonly signInProvider: SignInProvider,
+
+    private readonly emailService: EmailService,
 
     /**
      * Inject refreshTokensProvider
@@ -48,5 +51,10 @@ export class AuthService {
     if (!user) throw new UnauthorizedException('User not found!');
     const currentUser: CurrentUser = { id: user.id, role: user.role as Role };
     return currentUser;
+  }
+
+  async sendTestEmail() {
+    // testign email sending functionality
+    return this.emailService.sendOrderConfirmation('mdrabiulkhanbabo@gmail.com', '12345', 99.99);
   }
 }

@@ -9,6 +9,7 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { RolesGuard } from './guards/roles/roles.guard';
 import { Roles } from './decorators/roles.decorator';
 import { Role } from 'src/common/enums/roles.enum';
+import { EmailService } from 'src/email/email.service';
 
 @Controller('auth')
 export class AuthController {
@@ -50,5 +51,10 @@ export class AuthController {
   })
   getMe(@Req() req: any): Promise<UserResponseDto> {
     return this.authService.getMe(req.user?.id);
+  }
+  // test email
+  @Get('test-email')
+  getTestEmail() {
+    return this.authService.sendTestEmail();
   }
 }

@@ -21,6 +21,8 @@ import { PaymentsModule } from './payments/payments.module';
 import { ShippingModule } from './shipping/shipping.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { EmailModule } from './email/email.module';
+import { BullModule } from '@nestjs/bullmq';
 
 // Get the current NODE_ENV
 const ENV = process.env.NODE_ENV;
@@ -48,6 +50,38 @@ const ENV = process.env.NODE_ENV;
         logging: process.env.NODE_ENV === 'development',
       }),
     }),
+
+    // ==================== BULLMQ ====================
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        connection: {
+          host: configService.get<string>('REDIS_HOST', 'localhost'),
+          port: configService.get<number>('REDIS_PORT', 6379),
+
+          // Recommended settings for production
+          maxRetriesPerRequest: null, // Important for BullMQ
+          enableReadyCheck: false,
+        },
+        defaultJobOptions: {
+          removeOnComplete: 100, // Keep last 100 completed jobs
+          removeOnFail: 50, // Keep last 50 failed jobs
+          attempts: 3,
+          backoff: {
+            type: 'exponential',
+            delay: 1000,
+          },
+        },
+      }),
+    }),
+
+    // Register queues that are used globally or by multiple modules
+    BullModule.registerQueue(
+      { name: 'email' }, // used by NotificationsModule
+      // { name: 'orders' },       // later if needed
+    ),
+
     ProductsModule,
     ProductVariantsModule,
     CategoryModule,
@@ -61,6 +95,7 @@ const ENV = process.env.NODE_ENV;
     ShippingModule,
     ReviewsModule,
     NotificationsModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
