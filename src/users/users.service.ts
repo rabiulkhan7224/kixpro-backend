@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -15,6 +17,7 @@ import { CreateUserProvider } from './providers/create-user.provider';
 import { FindOneUserByEmailProvider } from './providers/find-one-user-by-email.provider';
 import { UserResponseDto } from 'src/auth/dto/userResponce.dto';
 import { plainToInstance } from 'class-transformer';
+import { HashingProvider } from 'src/auth/providers/hashing.provider';
 
 /**
  * Service handling all business logic for the /users endpoint.
@@ -30,6 +33,8 @@ export class UsersService {
     private readonly createUserProvider: CreateUserProvider,
 
     private readonly findOneUserByEmailProvider: FindOneUserByEmailProvider,
+    @Inject(forwardRef(() => HashingProvider))
+    private readonly hashingProvider: HashingProvider,
   ) {}
 
   /**
@@ -127,5 +132,18 @@ export class UsersService {
     return plainToInstance(UserResponseDto, user, {
       excludeExtraneousValues: true,
     });
+  }
+
+  async markEmailAsVerified(email: string) {
+    return this.usersRepository.update({ email }, { isEmailVerified: true });
+  }
+
+  async findByEmail(email: string) {
+    return this.usersRepository.findOne({ where: { email } });
+  }
+
+  async updatePassword(userId: string, newPassword: string) {
+    const hashedPassword = await this.hashingProvider.hashPassword(newPassword); // use your hashing logic
+    return this.usersRepository.update(userId, { password: hashedPassword });
   }
 }
