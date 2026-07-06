@@ -23,6 +23,7 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { EmailModule } from './email/email.module';
 import { BullModule } from '@nestjs/bullmq';
+import { RedisModule } from './common/redis/redis.module';
 
 // Get the current NODE_ENV
 const ENV = process.env.NODE_ENV;
@@ -75,7 +76,7 @@ const ENV = process.env.NODE_ENV;
         },
       }),
     }),
-
+    RedisModule,
     // Register queues that are used globally or by multiple modules
     BullModule.registerQueue(
       { name: 'email' }, // used by NotificationsModule

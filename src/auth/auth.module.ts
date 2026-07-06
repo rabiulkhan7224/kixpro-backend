@@ -14,6 +14,7 @@ import { JwtStrategy } from './jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { EmailService } from 'src/email/email.service';
 import { EmailModule } from 'src/email/email.module';
+import { RedisModule } from 'src/common/redis/redis.module';
 
 @Module({
   controllers: [AuthController],
@@ -33,6 +34,7 @@ import { EmailModule } from 'src/email/email.module';
     ConfigModule.forFeature(jwtConfig),
     JwtModule.registerAsync(jwtConfig.asProvider()),
     PassportModule.register({ defaultStrategy: 'jwt' }),
+
     EmailModule,
   ],
   exports: [AuthService, HashingProvider],
