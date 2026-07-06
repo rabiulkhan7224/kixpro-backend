@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { SignInProvider } from './providers/sign-in.provider';
 import { RefreshTokensProvider } from './providers/refresh-tokens.provider';
@@ -45,6 +45,31 @@ export class AuthService {
   private generateResetToken(): string {
     return crypto.randomBytes(32).toString('hex');
   }
+
+  // signin
+  public async signIn(signInDto: SignInDto) {
+    return await this.signInProvider.signIn(signInDto);
+  }
+  // refresh tokens
+  public async refreshTokens(refreshTokenDto: RefreshTokenDto) {
+    return await this.refreshTokensProvider.refreshTokens(refreshTokenDto);
+  }
+  // signup
+  public async signUp(createAuthDto: CreateUserDto) {
+    return await this.usersService.createUser(createAuthDto);
+  }
+  // get me
+  public async getMe(userId: string): Promise<UserResponseDto> {
+    return await this.usersService.getUserById(userId);
+  }
+  // validate jwt user
+  async validateJwtUser(userId: string) {
+    const user = await this.usersService.getUserById(userId);
+    if (!user) throw new UnauthorizedException('User not found!');
+    const currentUser: CurrentUser = { id: user.id, role: user.role as Role };
+    return currentUser;
+  }
+  // send otp email
   async sendOtpEmail(email: string) {
     const otp = this.generateOtp();
     const ttl = 5 * 60; // 5 minutes in seconds
@@ -63,8 +88,8 @@ export class AuthService {
 
     return { message: 'Verification OTP sent to your email', expiresIn: ttl };
   }
-
-  async verifyOtpEmail(email: string, otp: string) {
+  // verify email otp
+  async verifyEmailOtp(email: string, otp: string) {
     const storedOtp = await this.redisService.get(`otp:email:${email}`);
     if (!storedOtp || storedOtp !== otp) {
       throw new UnauthorizedException('OTP has expired or is invalid.');
@@ -75,27 +100,48 @@ export class AuthService {
     return { message: 'Email verified successfully' };
   }
 
-  public async signIn(signInDto: SignInDto) {
-    return await this.signInProvider.signIn(signInDto);
+  // forgot password
+  async forgotPassword(email: string) {
+    const user = await this.usersService.findByEmail(email);
+    if (!user) {
+      // Don't reveal if user exists (security)
+      return { message: 'If an account with that email exists, a reset link has been sent.' };
+    }
+
+    const resetToken = this.generateResetToken();
+    const ttl = 60 * 60; // 1 hour
+
+    await this.redisService.set(`reset:token:${resetToken}`, user.id, ttl);
+
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+
+    await this.emailQueue.add(
+      'password-reset',
+      {
+        to: email,
+        resetLink,
+        subject: 'Reset Your Password',
+      },
+      { attempts: 3 },
+    );
+
+    return { message: 'Password reset link sent to your email' };
   }
 
-  public async refreshTokens(refreshTokenDto: RefreshTokenDto) {
-    return await this.refreshTokensProvider.refreshTokens(refreshTokenDto);
-  }
+  // reset password
+  async resetPassword(resetToken: string, newPassword: string) {
+    const userId = await this.redisService.get(`reset:token:${resetToken}`);
 
-  public async signUp(createAuthDto: CreateUserDto) {
-    return await this.usersService.createUser(createAuthDto);
-  }
+    if (!userId) {
+      throw new BadRequestException('Invalid or expired reset token');
+    }
 
-  public async getMe(userId: string): Promise<UserResponseDto> {
-    return await this.usersService.getUserById(userId);
-  }
+    await this.usersService.updatePassword(userId, newPassword);
 
-  async validateJwtUser(userId: string) {
-    const user = await this.usersService.getUserById(userId);
-    if (!user) throw new UnauthorizedException('User not found!');
-    const currentUser: CurrentUser = { id: user.id, role: user.role as Role };
-    return currentUser;
+    // Invalidate token
+    await this.redisService.del(`reset:token:${resetToken}`);
+
+    return { message: 'Password reset successfully' };
   }
 
   async sendTestEmail() {
