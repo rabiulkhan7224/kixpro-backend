@@ -1,4 +1,4 @@
-import { BadRequestException, forwardRef, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { SignInProvider } from './providers/sign-in.provider';
 import { RefreshTokensProvider } from './providers/refresh-tokens.provider';
@@ -37,6 +37,8 @@ export class AuthService {
     private readonly emailQueue: Queue,
   ) {}
 
+  // logger
+  private readonly logger = new Logger(AuthService.name);
   // ==================== OTP Email Verification ====================
   private generateOtp(): string {
     return crypto.randomInt(100000, 999999).toString();
@@ -56,7 +58,33 @@ export class AuthService {
   }
   // signup
   public async signUp(createAuthDto: CreateUserDto) {
-    return await this.usersService.createUser(createAuthDto);
+    // 1. Create the user
+    const user = await this.usersService.createUser(createAuthDto);
+
+    // 2. Send OTP for email verification (after successful registration)
+    try {
+      await this.sendEmailVerificationOtp(user.email);
+
+      return {
+        success: true,
+        user: {
+          id: user.id,
+          email: user.email,
+          // ... other safe fields (exclude password)
+        },
+        message: 'User registered successfully. Please verify your email with the OTP sent.',
+        requiresVerification: true,
+      };
+    } catch (error) {
+      this.logger.warn(`Failed to send OTP to ${user.email}`, error);
+
+      return {
+        success: true,
+        user: { id: user.id, email: user.email },
+        message: 'Account created, but failed to send verification email. Please contact support.',
+        requiresVerification: true,
+      };
+    }
   }
   // get me
   public async getMe(userId: string): Promise<UserResponseDto> {
@@ -70,7 +98,7 @@ export class AuthService {
     return currentUser;
   }
   // send otp email
-  async sendOtpEmail(email: string) {
+  async sendEmailVerificationOtp(email: string) {
     const otp = this.generateOtp();
     const ttl = 5 * 60; // 5 minutes in seconds
 
@@ -81,9 +109,12 @@ export class AuthService {
       {
         to: email,
         otp,
-        subject: 'Verify Your Email Address',
       },
-      { attempts: 3 },
+      {
+        attempts: 3,
+
+        backoff: { type: 'exponential', delay: 2000 },
+      },
     );
 
     return { message: 'Verification OTP sent to your email', expiresIn: ttl };

@@ -66,7 +66,7 @@ const ENV = process.env.NODE_ENV;
           enableReadyCheck: false,
         },
         defaultJobOptions: {
-          removeOnComplete: 100, // Keep last 100 completed jobs
+          removeOnComplete: 10, // Keep last 100 completed jobs
           removeOnFail: 50, // Keep last 50 failed jobs
           attempts: 3,
           backoff: {
