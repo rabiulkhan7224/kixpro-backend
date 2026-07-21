@@ -79,8 +79,9 @@ const ENV = process.env.NODE_ENV;
     RedisModule,
     // Register queues that are used globally or by multiple modules
     BullModule.registerQueue(
-      { name: 'email' }, // used by NotificationsModule
-      // { name: 'orders' },       // later if needed
+      { name: 'email' },
+      { name: 'notification' }, // used by NotificationsModule
+      { name: 'orders' },
     ),
 
     ProductsModule,
